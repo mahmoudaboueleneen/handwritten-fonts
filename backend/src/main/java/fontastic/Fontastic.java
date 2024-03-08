@@ -33,7 +33,6 @@
 
 package fontastic;
 
-
 import org.mahmoudaboueleneen.Config;
 import org.doubletype.ossa.*;
 import org.doubletype.ossa.adapter.*;
@@ -48,7 +47,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Fontastic A font file writer for Processing. http://code.andreaskoller.com/libraries/fontastic
+ * Fontastic A font file writer for Processing.
+ * http://code.andreaskoller.com/libraries/fontastic
  * 
  */
 public class Fontastic {
@@ -62,7 +62,7 @@ public class Fontastic {
 	private String TTFfilename;
 	private String WOFFfilename;
 	private String HTMLfilename;
-	
+
 	private List<FGlyph> glyphs;
 
 	private int advanceWidth = 512;
@@ -94,9 +94,9 @@ public class Fontastic {
 	 * @example Fontastic f = new Fontastic(this, "MyFont");
 	 * 
 	 * @param myParent
-	 *            Your processing sketch (this).
+	 *                 Your processing sketch (this).
 	 * @param fontname
-	 *            Font name
+	 *                 Font name
 	 * 
 	 */
 	public Fontastic(PApplet myParent, String fontname) {
@@ -154,12 +154,14 @@ public class Fontastic {
 	}
 
 	/**
-	 * Builds the font and writes the .ttf and the .woff file as well as a HTML template for previewing the WOFF.
-	 * If debug is set (default is true) then you'll see the .ttf and .woff file name in the console.
+	 * Builds the font and writes the .ttf and the .woff file as well as a HTML
+	 * template for previewing the WOFF.
+	 * If debug is set (default is true) then you'll see the .ttf and .woff file
+	 * name in the console.
 	 */
 	public void buildFont() {
 		// Create TTF file with doubletype
-		
+
 		m_engine.addDefaultGlyphs();
 
 		for (FGlyph glyph : glyphs) {
@@ -202,64 +204,66 @@ public class Fontastic {
 
 		// End TTF creation
 
-		// TODO: Re-enable WOFF file creation (disabled due to the lack of a template.html file)
+		// TODO: Re-enable WOFF file creation (disabled due to the lack of a
+		// template.html file)
 
-//		// Create a WOFF file from this TTF file using sfntly
-//
-//		FontFactory fontFactory = FontFactory.getInstance();
-//
-//		File fontFile = new File(getTTFfilename());
-//		File outputFile = new File(WOFFfilename);
-//
-//		byte[] fontBytes = new byte[0];
-//		try {
-//			FileInputStream fis = new FileInputStream(fontFile);
-//			fontBytes = new byte[(int) fontFile.length()];
-//			fis.read(fontBytes);
-//		} catch (IOException e) {
-//			System.out
-//					.println("Error while creating WOFF File. TTF file not found: "
-//							+ getTTFfilename());
-//			e.printStackTrace();
-//		}
-//
-//		Font[] fontArray = null;
-//		try {
-//			fontArray = fontFactory.loadFonts(fontBytes);
-//		} catch (IOException e) {
-//			System.out
-//					.println("Error while creating WOFF File. TTF file could not be read: "
-//							+ getTTFfilename());
-//			e.printStackTrace();
-//		}
-//		Font font = fontArray[0];
-//
-//		try {
-//			FileOutputStream fos = new FileOutputStream(outputFile);
-//			WoffWriter w = new WoffWriter();
-//			WritableFontData woffData = w.convert(font);
-//			woffData.copyTo(fos);
-//			if (debug)
-//				System.out.println("WOFF File created successfully: "
-//						+ getWOFFfilename());
-//		} catch (IOException e) {
-//			System.out
-//					.println("Error while creating WOFF File. WOFF file could not be written."
-//							+ outputFile);
-//			e.printStackTrace();
-//		}
-//
-//		// End of WOFF creation
-//
-//		// Create HTML Template for WOFF file
-//		String htmlTemplate = myParent.join(myParent.loadStrings("template.html"), "\n");
-//		Map<String, String> params = new HashMap<String, String>();
-//		params.put("FONTNAME", fontname);
-//		params.put("WOFFFILENAME", getFontname()+".woff");
-//		String htmlContent = replaceAll(htmlTemplate, params);
-//
-//		myParent.saveStrings(HTMLfilename, myParent.split(htmlContent, "\n"));
-//		// End HTML Template
+		// // Create a WOFF file from this TTF file using sfntly
+		//
+		// FontFactory fontFactory = FontFactory.getInstance();
+		//
+		// File fontFile = new File(getTTFfilename());
+		// File outputFile = new File(WOFFfilename);
+		//
+		// byte[] fontBytes = new byte[0];
+		// try {
+		// FileInputStream fis = new FileInputStream(fontFile);
+		// fontBytes = new byte[(int) fontFile.length()];
+		// fis.read(fontBytes);
+		// } catch (IOException e) {
+		// System.out
+		// .println("Error while creating WOFF File. TTF file not found: "
+		// + getTTFfilename());
+		// e.printStackTrace();
+		// }
+		//
+		// Font[] fontArray = null;
+		// try {
+		// fontArray = fontFactory.loadFonts(fontBytes);
+		// } catch (IOException e) {
+		// System.out
+		// .println("Error while creating WOFF File. TTF file could not be read: "
+		// + getTTFfilename());
+		// e.printStackTrace();
+		// }
+		// Font font = fontArray[0];
+		//
+		// try {
+		// FileOutputStream fos = new FileOutputStream(outputFile);
+		// WoffWriter w = new WoffWriter();
+		// WritableFontData woffData = w.convert(font);
+		// woffData.copyTo(fos);
+		// if (debug)
+		// System.out.println("WOFF File created successfully: "
+		// + getWOFFfilename());
+		// } catch (IOException e) {
+		// System.out
+		// .println("Error while creating WOFF File. WOFF file could not be written."
+		// + outputFile);
+		// e.printStackTrace();
+		// }
+		//
+		// // End of WOFF creation
+		//
+		// // Create HTML Template for WOFF file
+		// String htmlTemplate = myParent.join(myParent.loadStrings("template.html"),
+		// "\n");
+		// Map<String, String> params = new HashMap<String, String>();
+		// params.put("FONTNAME", fontname);
+		// params.put("WOFFFILENAME", getFontname()+".woff");
+		// String htmlContent = replaceAll(htmlTemplate, params);
+		//
+		// myParent.saveStrings(HTMLfilename, myParent.split(htmlContent, "\n"));
+		// // End HTML Template
 	}
 
 	/**
@@ -428,7 +432,7 @@ public class Fontastic {
 	 * Sets the value of debug
 	 * 
 	 * @param debug
-	 *            true or false
+	 *              true or false
 	 */
 	public void setDebug(boolean debug) {
 		this.debug = debug;
@@ -438,7 +442,7 @@ public class Fontastic {
 	 * Add a glyph
 	 * 
 	 * @param c
-	 *            Character of the glyph.
+	 *          Character of the glyph.
 	 * 
 	 * @return FGlyph that has been created.
 	 * 
@@ -459,10 +463,10 @@ public class Fontastic {
 	 * Add a glyph and its one contour
 	 * 
 	 * @param c
-	 *            Character of the glyph.
+	 *                Character of the glyph.
 	 * 
 	 * @param contour
-	 *            Shape of the glyph as FContour.
+	 *                Shape of the glyph as FContour.
 	 * 
 	 * @return The glyph FGlyph that has been created. You can use this to store
 	 *         the glyph and add contours afterwards. Alternatively, you can
@@ -487,10 +491,10 @@ public class Fontastic {
 	 * Add a glyph and its contours
 	 * 
 	 * @param c
-	 *            Character of the glyph.
+	 *                 Character of the glyph.
 	 * 
 	 * @param contours
-	 *            [] Shape of the glyph in an array of FContour.
+	 *                 [] Shape of the glyph in an array of FContour.
 	 * 
 	 * @return The FGlyph that has been created. You can use this to store the
 	 *         glyph and add contours afterwards. Alternatively, you can call
@@ -517,7 +521,7 @@ public class Fontastic {
 	 * Get glyph by character
 	 * 
 	 * @param c
-	 *            The character of the glyph
+	 *          The character of the glyph
 	 * 
 	 * @return The glyph
 	 */
