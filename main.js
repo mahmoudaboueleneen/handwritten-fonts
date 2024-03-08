@@ -9,7 +9,7 @@ const createWindow = () => {
     },
   });
 
-  win.loadFile("index.html");
+  win.loadFile("frontend/index.html");
   win.maximize();
   win.show();
 };
