@@ -1,11 +1,14 @@
 const app = require("electron").app;
 const BrowserWindow = require("electron").BrowserWindow;
 const ipcMain = require("electron").ipcMain;
+const dialog = require("electron").dialog;
 const path = require("path");
 const { spawn } = require("child_process");
 
+let win;
+
 const createWindow = () => {
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     show: false,
     webPreferences: {
       devTools: true,
@@ -15,7 +18,7 @@ const createWindow = () => {
     },
   });
 
-  win.loadFile("frontend/edit.html");
+  win.loadFile("frontend/index.html");
   win.maximize();
   win.show();
 };
@@ -49,4 +52,23 @@ ipcMain.on("run-java", (event, arg) => {
   javaProcess.on("close", (code) => {
     console.log(`Java process exited with code ${code}`);
   });
+});
+
+ipcMain.on("open-file-dialog", (event) => {
+  dialog
+    .showOpenDialog({
+      properties: ["openFile"],
+      filters: [{ name: "Images", extensions: ["jpg", "png"] }],
+    })
+    .then((result) => {
+      if (!result.canceled) {
+        win.loadFile("frontend/edit.html");
+        win.webContents.on("did-finish-load", () => {
+          win.webContents.send("selected-file", result.filePaths[0]);
+        });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 });

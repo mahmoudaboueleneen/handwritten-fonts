@@ -6,9 +6,17 @@
     <title>Document</title>
 </head>
 <body>
+    <p>EDIT!</p>
+    <img id="selected-image" src="" alt="Selected Image">
     <button id="runJavaButton">Generate Font</button>
 
     <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            window.electron.on('selected-file', (event, path) => {
+                document.getElementById('selected-image').src = 'file://' + path;
+            });
+        });
+
         document.getElementById('runJavaButton').addEventListener('click', () => {
             let args = ["arg1", "arg2", "arg3"];
             window.electron.runJava(args);
