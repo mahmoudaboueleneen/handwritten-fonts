@@ -6,13 +6,13 @@
     <title>Document</title>
 </head>
 <body>
-    <form onsubmit="">
-		<input type="file" name="uploadFile" /> <br/><br/>
-		<input type="submit" value="Upload File"  class="button"/>
-	</form>
+    <button id="runJavaButton">Generate Font</button>
 
     <script>
-        
+        document.getElementById('runJavaButton').addEventListener('click', () => {
+            let args = ["arg1", "arg2", "arg3"];
+            window.electron.runJava(args);
+        });
     </script>
 </body>
 </html>
