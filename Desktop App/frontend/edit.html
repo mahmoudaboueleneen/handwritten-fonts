@@ -3,24 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Handwritten Fonts</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="../node_modules/cropperjs/dist/cropper.min.css" />
 </head>
 <body>
-    <p>EDIT!</p>
-    <img id="selected-image" src="" alt="Selected Image">
-    <button id="runJavaButton">Generate Font</button>
+    <div class="container">
+        <h1 class="">EDIT!</h1>
+        
+        <img id="selected-image" src="" alt="Selected Image">
+        
+        <div class="dropdown" id="contextMenu">
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <li><a class="dropdown-item" href="#">a</a></li>
+              <!-- Add more letters as needed -->
+            </ul>
+        </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', (event) => {
-            window.electron.on('selected-file', (event, path) => {
-                document.getElementById('selected-image').src = 'file://' + path;
-            });
-        });
+        <button id="runJavaButton">Generate Font</button>
+    </div>
 
-        document.getElementById('runJavaButton').addEventListener('click', () => {
-            let args = ["arg1", "arg2", "arg3"];
-            window.electron.runJava(args);
-        });
-    </script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="../node_modules/cropperjs/dist/cropper.min.js"></script>
+    <script src="js/edit.js"></script>
 </body>
 </html>

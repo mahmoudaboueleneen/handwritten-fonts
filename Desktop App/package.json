@@ -5,11 +5,15 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
+    "build-css": "postcss frontend/css/styles.css -o frontend/css/postcss-output.css",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Mahmoud Abou Eleneen",
   "license": "ISC",
   "devDependencies": {
     "electron": "^29.1.1"
+  },
+  "dependencies": {
+    "cropperjs": "^1.6.1"
   }
 }
