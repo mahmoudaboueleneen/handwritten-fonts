@@ -1,6 +1,7 @@
 {
     "name": "Handwritten Fonts",
     "version": "1.0.0",
+    "description": "Send messages and view content in your own handwritten font!",
     "manifest_version": 3,
     "action": {
         "default_popup": "index.html"
