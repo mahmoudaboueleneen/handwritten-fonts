@@ -16,9 +16,9 @@
 
     <packaging>jar</packaging>
 
-    <!-- <build>
+    <build>
         <plugins>
-            <plugin>
+            <!-- <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.2.0</version>
@@ -30,36 +30,27 @@
                     </manifest>
                     </archive>
                 </configuration>
-            </plugin>
-        </plugins>
-    </build> -->
+            </plugin> -->
 
-    <build>
-        <resources>
-            <resource>
-                <directory>${project.basedir}/lib</directory>
-            </resource>
-        </resources>
-
-        <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                    <manifest>
+                        <mainClass>org.mahmoudaboueleneen.Main</mainClass>
+                    </manifest>
+                    </archive>
+                    <descriptorRefs>
+                    <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
                 <executions>
                     <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>org.mahmoudaboueleneen.Main</mainClass>
-                                </transformer>
-                            </transformers>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                        </configuration>
+                    <id>make-assembly</id>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>single</goal>
+                    </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -81,40 +72,40 @@
             <groupId>com.example</groupId>
             <artifactId>doubletype</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/doubletype.jar</systemPath>
+            <!-- <scope>system</scope>
+            <systemPath>${project.basedir}/lib/doubletype.jar</systemPath> -->
         </dependency>
 
         <dependency>
             <groupId>com.example</groupId>
             <artifactId>geomerative</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/geomerative.jar</systemPath>
+            <!-- <scope>system</scope>
+            <systemPath>${project.basedir}/lib/geomerative.jar</systemPath> -->
         </dependency>
 
         <dependency>
             <groupId>com.example</groupId>
             <artifactId>sfntly</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/sfntly.jar</systemPath>
+            <!-- <scope>system</scope>
+            <systemPath>${project.basedir}/lib/sfntly.jar</systemPath> -->
         </dependency>
 
         <dependency>
             <groupId>com.example</groupId>
             <artifactId>sfnttool</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/sfnttool.jar</systemPath>
+            <!-- <scope>system</scope>
+            <systemPath>${project.basedir}/lib/sfnttool.jar</systemPath> -->
         </dependency>
 
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-catalina</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/catalina.jar</systemPath>
+            <!-- <scope>system</scope>
+            <systemPath>${project.basedir}/lib/catalina.jar</systemPath> -->
         </dependency>
     </dependencies>
 
