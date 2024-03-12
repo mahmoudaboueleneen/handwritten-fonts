@@ -5,26 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Handwritten Fonts</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="../node_modules/cropperjs/dist/cropper.min.css" />
+    <!-- <link rel="stylesheet" href="../node_modules/cropperjs/dist/cropper.min.css" /> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" />
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <div class="container">
+    <div class="container position-relative">
         <h1 class="">EDIT!</h1>
         
-        <img id="selected-image" src="" alt="Selected Image">
-        
-        <div class="dropdown" id="contextMenu">
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <li><a class="dropdown-item" href="#">a</a></li>
-              <!-- Add more letters as needed -->
-            </ul>
+        <div>
+            <img id="selected-image" src="" alt="Selected Image">
         </div>
+
+        <div class="dropdown" id="contextMenu">
+            <ul class="dropdown-menu">
+                <li><h6 class="dropdown-header">Select the matching character</h6></li>
+                <li><button class="dropdown-item" type="button">a</button></li>
+                <li><button class="dropdown-item" type="button">b</button></li>
+                <li><button class="dropdown-item" type="button">c</button></li>
+                <li><button class="dropdown-item" type="button">d</button></li>
+                <li><button class="dropdown-item" type="button">e</button></li>
+                <li><button class="dropdown-item" type="button">f</button></li>
+                <li><button class="dropdown-item" type="button">g</button></li>
+                <li><button class="dropdown-item" type="button">h</button></li>
+                <li><button class="dropdown-item" type="button">i</button></li>
+                <li><button class="dropdown-item" type="button">j</button></li>
+                <li><button class="dropdown-item" type="button">k</button></li>
+                <li><button class="dropdown-item" type="button">l</button></li>
+                <li><button class="dropdown-item" type="button">m</button></li>
+                <li><button class="dropdown-item" type="button">n</button></li>
+                <li><button class="dropdown-item" type="button">o</button></li>
+                <li><button class="dropdown-item" type="button">p</button></li>
+                <li><button class="dropdown-item" type="button">q</button></li>
+                <li><button class="dropdown-item" type="button">r</button></li>
+                <li><button class="dropdown-item" type="button">s</button></li>
+                <li><button class="dropdown-item" type="button">t</button></li>
+                <li><button class="dropdown-item" type="button">u</button></li>
+                <li><button class="dropdown-item" type="button">v</button></li>
+                <li><button class="dropdown-item" type="button">w</button></li>
+                <li><button class="dropdown-item" type="button">x</button></li>
+                <li><button class="dropdown-item" type="button">y</button></li>
+                <li><button class="dropdown-item" type="button">z</button></li>
+            </ul>
+          </div>
 
         <button id="runJavaButton">Generate Font</button>
     </div>
 
     <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="../node_modules/cropperjs/dist/cropper.min.js"></script>
+    <!-- <script src="../node_modules/cropperjs/dist/cropper.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <script src="js/edit.js"></script>
 </body>
 </html>

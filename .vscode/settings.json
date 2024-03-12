@@ -4,9 +4,11 @@
         "cropend",
         "daisyui",
         "Eleneen",
+        "Fontastic",
         "Mahmoud",
         "mahmoudaboueleneen",
         "tailwindcss",
         "zoomable"
-    ]
+    ],
+    "java.configuration.updateBuildConfiguration": "disabled"
 }

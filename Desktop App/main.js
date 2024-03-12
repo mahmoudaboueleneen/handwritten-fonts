@@ -37,7 +37,11 @@ app.on("window-all-closed", () => {
 
 ipcMain.on("run-java", (event, arg) => {
   let javaCmd = "java";
-  let javaArgs = ["-jar", "backend/target/handwritten-fonts-1.0-SNAPSHOT.jar", ...arg];
+  let javaArgs = [
+    "-jar",
+    "backend/target/handwritten-fonts-1.0-SNAPSHOT-jar-with-dependencies.jar",
+    ...arg,
+  ];
 
   let javaProcess = spawn(javaCmd, javaArgs);
 
