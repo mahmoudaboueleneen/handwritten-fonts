@@ -9,8 +9,8 @@ import java.util.UUID;
 public class FontCreation extends PApplet {
 	int[][] Data;
 	char[] Cs;
-	int [] w;
-	int [] h;
+	int[] w;
+	int[] h;
 
 	public FontCreation(int[][] charData, char[] characters, int[] width, int[] height) {
 		Data = charData;
@@ -18,7 +18,7 @@ public class FontCreation extends PApplet {
 		w = width;
 		h = height;
 	}
-	
+
 	public void makeFont() {
 		String userID = UUID.randomUUID().toString();
 
@@ -28,29 +28,29 @@ public class FontCreation extends PApplet {
 
 		// TODO: Change author name
 		// Set author name - will be saved in TTF file too
-    	font.setAuthor("Mahmoud Abou Eleneen");
-    	font.getEngine().setBaseline(0);
-    	font.getEngine().setMeanline(5);
+		font.setAuthor("Mahmoud Abou Eleneen");
+		font.getEngine().setBaseline(0);
+		font.getEngine().setMeanline(5);
 
-    	PVector[] points = {};
-    	if(Data.length != 0) {
-    		for(int i = 0 ; i < Data.length ; i++) {
-    			font.addGlyph(Cs[i]);
-    			for(int j = 0 ; j < Data[i].length; j++) {
-    				if(Data[i][j] == 0 || Data[i][j] < 200 ) {
-    	    			points = new PVector[4];
-    					points[0] = new PVector((j%w[i]*10)-6, (-1*(j/w[i]*10)-6)+400); 
-    					points[1] = new PVector((j%w[i]*10)+6, (-1*(j/w[i]*10)-6)+400); 
-    					points[2] = new PVector((j%w[i]*10)+6, (-1*(j/w[i]*10)+6)+400); 
-    					points[3] = new PVector((j%w[i]*10)-6, (-1*(j/w[i]*10)+6)+400); 
-    					font.getGlyph(Cs[i]).addContour(points);
-    				}
-    			}
-    		}
-    	}
+		PVector[] points = {};
+		if (Data.length != 0) {
+			for (int i = 0; i < Data.length; i++) {
+				font.addGlyph(Cs[i]);
+				for (int j = 0; j < Data[i].length; j++) {
+					if (Data[i][j] == 0 || Data[i][j] < 200) {
+						points = new PVector[4];
+						points[0] = new PVector((j % w[i] * 10) - 6, (-1 * (j / w[i] * 10) - 6) + 400);
+						points[1] = new PVector((j % w[i] * 10) + 6, (-1 * (j / w[i] * 10) - 6) + 400);
+						points[2] = new PVector((j % w[i] * 10) + 6, (-1 * (j / w[i] * 10) + 6) + 400);
+						points[3] = new PVector((j % w[i] * 10) - 6, (-1 * (j / w[i] * 10) + 6) + 400);
+						font.getGlyph(Cs[i]).addContour(points);
+					}
+				}
+			}
+		}
 
-    	font.buildFont();                                 
-    	font.cleanup();    
+		font.buildFont();
+		font.cleanup();
 	}
 
 }
