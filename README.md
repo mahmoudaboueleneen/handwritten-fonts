@@ -2,7 +2,7 @@
 
 ## Table of Contents
 
-## Overview
+## Architectural Overview
 
 ## Desktop App
 
@@ -16,21 +16,9 @@ Add dependencies to the local Maven Repository. (These dependencies aren't prese
 
 ```bash
 mvn install:install-file -Dfile='lib/doubletype.jar' -DgroupId='com.example' -DartifactId='doubletype' -Dversion='1.0' -Dpackaging=jar
-```
-
-```bash
 mvn install:install-file -Dfile='lib/geomerative.jar' -DgroupId='com.example' -DartifactId='geomerative' -Dversion='1.0' -Dpackaging=jar
-```
-
-```bash
 mvn install:install-file -Dfile='lib/sfntly.jar' -DgroupId='com.example' -DartifactId='sfntly' -Dversion='1.0' -Dpackaging=jar
-```
-
-```bash
 mvn install:install-file -Dfile='lib/sfnttool.jar' -DgroupId='com.example' -DartifactId='sfnttool' -Dversion='1.0' -Dpackaging=jar
-```
-
-```bash
 mvn install:install-file -Dfile='lib/catalina.jar' -DgroupId='org.apache.tomcat' -DartifactId='tomcat-catalina' -Dversion='1.0' -Dpackaging=jar
 ```
 

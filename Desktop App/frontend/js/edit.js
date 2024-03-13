@@ -40,17 +40,21 @@ document.addEventListener("DOMContentLoaded", (event) => {
     // Initialize Cropper.js on the image after it's loaded
     image.onload = () => {
       console.log("Image loaded");
+
+      // Set the size of the container to match the image
+      const container = document.getElementById("image-container");
+      container.style.width = `${image.naturalWidth}px`;
+      container.style.height = `${image.naturalHeight}px`;
+
       cropper = new Cropper(image, {
-        aspectRatio: 1 / 1,
         zoomable: false,
         rotatable: false,
         autoCropArea: 0.1,
-        viewMode: 1,
         ready: function () {
           console.log("Cropper initialized");
         },
-        cropend: function () {
-          handleCropEnd(cropper);
+        crop: function () {
+          handleCrop(cropper);
         },
       });
     };
@@ -60,9 +64,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
 const contextMenu = document.getElementById("contextMenu");
 const dropdownMenuButton = new bootstrap.Dropdown(contextMenu);
 
-function handleCropEnd(passedCropper) {
-  console.log(passedCropper);
-
+function handleCrop(passedCropper) {
   const cropBoxData = passedCropper.getCropBoxData();
 
   contextMenu.style.position = "absolute";
