@@ -2,7 +2,11 @@
 export default {
   content: ["./index.html", "./src/**/*.tsx"],
   theme: {
-    extend: {},
+    extend: {}
   },
-  plugins: [require("daisyui")],
+  daisyui: {
+    themes: ["light", "dark", "black"]
+  },
+  // eslint-disable-next-line no-undef
+  plugins: [require("daisyui")]
 };
