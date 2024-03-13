@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "@helia/strings": "^3.0.1",
-    "helia": "^4.0.2",
-    "multiformats": "^13.1.0"
-  }
-}
