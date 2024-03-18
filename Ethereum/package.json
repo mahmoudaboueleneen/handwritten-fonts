@@ -1,0 +1,25 @@
+{
+  "name": "handwritten-fonts-ethereum",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha",
+    "compile": "node compile.js",
+    "deploy": "node deploy.js"
+  },
+  "author": "Mahmoud Abou Eleneen",
+  "license": "ISC",
+  "dependencies": {
+    "@truffle/hdwallet-provider": "^2.1.15",
+    "dotenv": "^16.4.5",
+    "fs-extra": "^11.2.0",
+    "ganache": "^7.9.2",
+    "mocha": "^10.3.0",
+    "solc": "^0.8.25",
+    "web3": "^4.6.0"
+  }
+}

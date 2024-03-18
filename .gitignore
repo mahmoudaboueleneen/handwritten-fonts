@@ -1,6 +1,3 @@
-node_modules
-
-
 ### Maven ###
 target/
 !.mvn/wrapper/maven-wrapper.jar
@@ -40,3 +37,7 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### Other ###
+.env
+node_modules

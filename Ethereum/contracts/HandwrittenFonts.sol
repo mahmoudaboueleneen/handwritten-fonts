@@ -4,13 +4,13 @@ pragma solidity ^0.8.24;
 
 /**
  * @title HandwrittenFonts
- * @dev
+ * @dev A contract for the Handwritten Fonts project
  * @author Mahmoud Abou Eleneen
  */
 contract HandwrittenFonts {
     struct EncryptedData {
-        string encryptedSymmetricKey;
-        string encryptedCid;
+        bytes32 encryptedSymmetricKey;
+        bytes32 encryptedCid;
     }
 
     // Mapping from message hash to encrypted symmetric key
@@ -20,18 +20,18 @@ contract HandwrittenFonts {
     mapping(address => bool) private passwordCreated;
 
     // Mapping of address to their Handwritten Fonts public key
-    mapping(address => string) public addressToPublicKey;
+    mapping(address => bytes32) public addressToPublicKey;
 
     /**
-     * @dev Store the encrypted symmetric key used to encrypt the
+     * @dev Store the encrypted symmetric key used to encrypt the font file
      * @param _messageHash the hash of the message
      * @param _encryptedSymmetricKey the encrypted symmetric key
      * @param _encryptedCid the encrypted IPFS CID of the font file this message should be displayed in
      */
     function storeEncryptedData(
         bytes32 _messageHash,
-        string memory _encryptedSymmetricKey,
-        string memory _encryptedCid
+        bytes32 _encryptedSymmetricKey,
+        bytes32 _encryptedCid
     ) public {
         messageHashToEncryptedData[_messageHash] = EncryptedData(
             _encryptedSymmetricKey,
@@ -71,7 +71,7 @@ contract HandwrittenFonts {
      * @param _address the account address to store the key for
      * @param _publicKey the public key to be stored
      */
-    function storePublicKey(address _address, string memory _publicKey) public {
+    function storePublicKey(address _address, bytes32 _publicKey) public {
         addressToPublicKey[_address] = _publicKey;
     }
 }
