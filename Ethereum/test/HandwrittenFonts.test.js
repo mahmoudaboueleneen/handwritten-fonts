@@ -33,7 +33,7 @@ describe("Handwritten Fonts", () => {
 
     await instance.methods
       .storeEncryptedData(testMessageHash, testEncryptedKey, testEncryptedCid)
-      .send({ from: accounts[0], gas: "1000000" });
+      .send({ from: accounts[0], gas: "1400000" });
 
     const storedData = await instance.methods.getEncryptedData(testMessageHash).call();
 
@@ -42,14 +42,14 @@ describe("Handwritten Fonts", () => {
   });
 
   it("updates password status", async () => {
-    const testAccount = accounts[1];
+    const testAccount = accounts[0];
     const testStatus = true;
 
     await instance.methods
-      .updatePasswordStatus(testAccount, testStatus)
-      .send({ from: accounts[0] });
+      .updatePasswordStatus(testStatus)
+      .send({ from: testAccount, gas: "1400000" });
 
-    const storedStatus = await instance.methods.checkPasswordStatus(testAccount).call();
+    const storedStatus = await instance.methods.checkPasswordStatus().call({ from: testAccount });
 
     assert.strictEqual(storedStatus, testStatus);
   });

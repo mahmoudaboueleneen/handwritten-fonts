@@ -20,24 +20,18 @@ const HandwrittenFonts = () => {
   ];
 
   return (
-    <div role="tablist" className="tabs tabs-bordered">
-      {tabs.map((tab, index) => (
-        <>
-          <input
-            key={index}
-            type="radio"
-            name="my_tabs_1"
-            role="tab"
-            className="tab"
-            aria-label={tab.name}
-            checked={activeTab === index}
-            onChange={() => setActiveTab(index)}
-          />
-          <div role="tabpanel" className="p-10 tab-content">
-            {tab.content}
-          </div>
-        </>
-      ))}
+    <div role="tablist" className="flex tabs tabs-boxed">
+      <div role="tablist" className="tabs tabs-boxed">
+        <a role="tab" className={`tab ${activeTab === 0 ? "tab-active" : ""}`} onClick={() => setActiveTab(0)}>
+          Tab 1
+        </a>
+        <a role="tab" className={`tab ${activeTab === 1 ? "tab-active" : ""}`} onClick={() => setActiveTab(1)}>
+          Tab 2
+        </a>
+        <a role="tab" className={`tab ${activeTab === 2 ? "tab-active" : ""}`} onClick={() => setActiveTab(2)}>
+          Tab 3
+        </a>
+      </div>
     </div>
   );
 };

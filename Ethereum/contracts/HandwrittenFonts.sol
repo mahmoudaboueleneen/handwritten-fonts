@@ -32,7 +32,7 @@ contract HandwrittenFonts {
         bytes32 _messageHash,
         bytes32 _encryptedSymmetricKey,
         bytes32 _encryptedCid
-    ) public {
+    ) external {
         messageHashToEncryptedData[_messageHash] = EncryptedData(
             _encryptedSymmetricKey,
             _encryptedCid
@@ -45,25 +45,23 @@ contract HandwrittenFonts {
      */
     function getEncryptedData(
         bytes32 _messageHash
-    ) public view returns (EncryptedData memory) {
+    ) external view returns (EncryptedData memory) {
         return messageHashToEncryptedData[_messageHash];
     }
 
     /**
      * @dev Update the password creation status for an account
-     * @param _account the account to update the password status for
      * @param _status the new status of the account's password
      */
-    function updatePasswordStatus(address _account, bool _status) public {
-        passwordCreated[_account] = _status;
+    function updatePasswordStatus(bool _status) public {
+        passwordCreated[msg.sender] = _status;
     }
 
     /**
      * @dev Check the password creation status for an account
-     * @param _account the account to check the status for
      */
-    function checkPasswordStatus(address _account) public view returns (bool) {
-        return passwordCreated[_account];
+    function checkPasswordStatus() external view returns (bool) {
+        return passwordCreated[msg.sender];
     }
 
     /**
@@ -71,7 +69,7 @@ contract HandwrittenFonts {
      * @param _address the account address to store the key for
      * @param _publicKey the public key to be stored
      */
-    function storePublicKey(address _address, bytes32 _publicKey) public {
+    function storePublicKey(address _address, bytes32 _publicKey) external {
         addressToPublicKey[_address] = _publicKey;
     }
 }

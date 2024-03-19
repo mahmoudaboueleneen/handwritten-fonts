@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 
-const Login = () => {
+const SelectAccountPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [accounts, setAccounts] = useState<string[]>([]);
   const { selectedAccount, setSelectedAccount } = useAuth();
@@ -84,4 +84,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SelectAccountPage;
