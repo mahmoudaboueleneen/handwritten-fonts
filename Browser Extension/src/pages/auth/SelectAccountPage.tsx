@@ -1,17 +1,19 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const SelectAccountPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [accounts, setAccounts] = useState<string[]>([]);
   const { selectedAccount, setSelectedAccount } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAccounts = async () => {
       if (window.ethereum) {
         console.log("Ethereum is available!", window.ethereum);
         try {
-          const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+          const accounts = (await window.ethereum.request({ method: "eth_requestAccounts" })) as string[];
           console.log("Accounts: ", accounts);
           setAccounts(accounts);
         } catch (err) {
@@ -32,7 +34,7 @@ const SelectAccountPage = () => {
 
   const handleProceedClick = () => {
     console.log("Proceeding with account: ", selectedAccount);
-    // Add your logic here to proceed to the next stage
+    navigate("/password-page");
   };
 
   if (loading)
@@ -46,8 +48,8 @@ const SelectAccountPage = () => {
   if (accounts.length === 0)
     return (
       <div className="flex flex-col items-center justify-center h-screen px-10">
-        <h1 className="text-xl font-bold">No MetaMask Account Found</h1>
-        <p>Please install and login to MetaMask to use Handwritten Fonts.</p>
+        <h1 className="pb-3 text-xl font-bold">No MetaMask Account Found..</h1>
+        <p>Please install and login to MetaMask and connect at least one MetaMask account to use Handwritten Fonts.</p>
       </div>
     );
 

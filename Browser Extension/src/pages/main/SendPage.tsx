@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const Upload = () => {
+const SendPage = () => {
   const [fileUrl, updateFileUrl] = useState(``);
   const [uploading, setUploading] = useState(false);
 
@@ -96,4 +96,4 @@ const Upload = () => {
   );
 };
 
-export default Upload;
+export default SendPage;

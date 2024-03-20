@@ -2,15 +2,17 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 
 import { AuthProvider } from "./contexts/AuthContext";
 import SelectAccountPage from "./pages/auth/SelectAccountPage";
-import HandwrittenFonts from "./pages/HandwrittenFonts";
+import HandwrittenFonts from "./pages/main/HandwrittenFonts";
+import PasswordPage from "./pages/auth/PasswordPage";
 
 const App = () => {
   return (
     <AuthProvider>
       <MemoryRouter>
         <Routes>
-          <Route path="/" element={<HandwrittenFonts />} />
-          {/* <Route path="/handwritten-fonts" element={<HandwrittenFonts />} /> */}
+          <Route path="/" element={<SelectAccountPage />} />
+          <Route path="/handwritten-fonts" element={<HandwrittenFonts />} />
+          <Route path="/password-page" element={<PasswordPage />} />
         </Routes>
       </MemoryRouter>
     </AuthProvider>

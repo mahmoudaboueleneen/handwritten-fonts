@@ -1,2 +1,8 @@
 /// <reference types="vite/client" />
-declare module "imagetracerjs";
+import { MetaMaskInpageProvider } from "@metamask/providers";
+
+declare global {
+  interface Window {
+    ethereum?: MetaMaskInpageProvider;
+  }
+}
