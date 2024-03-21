@@ -6,12 +6,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { getContractInstance } from "../../ethereum/ContractInstance";
+import { getContractInstance } from "../../utils/ethereum/ContractInstance";
 import { useAuth } from "../../hooks/useAuth";
 import { config } from "../../config/config";
-import { generateKeyPair } from "../../utils/AsymmetricEncryption";
-import { encryptMessageSymmetric, decryptMessageSymmetric } from "../../utils/SymmetricEncryption";
-import { SymmetricDecryptionError } from "../../errors/SymmetricDecryptionError";
+import { generateKeyPair } from "../../utils/cryptography/AsymmetricEncryption";
+import { encryptMessageSymmetric, decryptMessageSymmetric } from "../../utils/cryptography/SymmetricEncryption";
+import { SymmetricDecryptionError } from "../../utils/errors/SymmetricDecryptionError";
 
 const PasswordPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -25,8 +25,8 @@ const PasswordPage = () => {
 
   useEffect(() => {
     const checkPasswordCreation = async () => {
-      setLoading(true);
       setLoadingMessage("Checking MetaMask Account linking status...");
+      setLoading(true);
 
       try {
         const contractInstance = getContractInstance(config.deployedContractAddress);
@@ -38,8 +38,8 @@ const PasswordPage = () => {
       } catch (err) {
         console.error(err);
       } finally {
-        setLoading(false);
         setLoadingMessage("");
+        setLoading(false);
       }
     };
 
@@ -49,8 +49,8 @@ const PasswordPage = () => {
   const onSubmitCreatePassword = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    setLoading(true);
     setLoadingMessage("Generating public and private key pair...");
+    setLoading(true);
 
     // TODO: Add strong password regex validation. If strong enough, proceed.
 
@@ -92,8 +92,8 @@ const PasswordPage = () => {
 
     setErrorMessage("");
 
-    setLoading(true);
     setLoadingMessage("Validating password...");
+    setLoading(true);
 
     const encryptedPrivateKey = localStorage.getItem("HandwrittenFonts_pk");
 
@@ -111,12 +111,12 @@ const PasswordPage = () => {
         if (error instanceof SymmetricDecryptionError) {
           setErrorMessage("Incorrect password.");
         } else {
-          setErrorMessage("An error occurred: " + error.message);
+          setErrorMessage("Incorrect password.");
         }
       }
     } finally {
-      setLoading(false);
       setLoadingMessage("");
+      setLoading(false);
     }
   };
 
@@ -178,7 +178,8 @@ const PasswordPage = () => {
         </div>
       </div>
 
-      {errorMessage && <span>{errorMessage}</span>}
+      {errorMessage && <span className="mb-3 text-error">{errorMessage}</span>}
+
       <form onSubmit={onSubmitLogin} className="w-full mx-auto space-y-2">
         <input
           type="password"
