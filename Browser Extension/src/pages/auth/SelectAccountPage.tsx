@@ -16,6 +16,9 @@ const SelectAccountPage = () => {
           const accounts = (await window.ethereum.request({ method: "eth_requestAccounts" })) as string[];
           console.log("Accounts: ", accounts);
           setAccounts(accounts);
+          if (accounts.length > 0) {
+            setSelectedAccount(accounts[0]);
+          }
         } catch (err) {
           console.error(err);
         } finally {

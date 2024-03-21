@@ -41,3 +41,23 @@ npm start
 ## Ethereum
 
 ## Getting Started
+
+## Tech Stack
+
+**Desktop App:**
+
+- Electron
+- HTML
+- CSS
+- JavaScript
+- Cropper.js
+- Bootstrap
+
+**Browser Extension:**
+
+- Vite
+- React
+- TypeScript
+- Tailwind
+- DaisyUI
+- Web3.js

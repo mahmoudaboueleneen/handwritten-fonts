@@ -21,24 +21,39 @@ describe("Handwritten Fonts", () => {
   });
 
   it("stores encrypted data", async () => {
-    const testMessageHash = padToBytes32(
-      "0x1234567890123456789012345678901234567890123456789012345678901234"
-    );
-    const testEncryptedKey = padToBytes32(
-      "0x123abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabc"
-    );
-    const testEncryptedCid = padToBytes32(
-      "0x456abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabc"
-    );
+    const testMessageHash = "";
+    const testCidOfEncryptedSymmetricKey =
+      "bafybeigaatp2gbrqht5rgypzsblf2lsy6sxaa47mxga7qtmu4a7buptqve";
+    const testFilenameOfEncryptedSymmetricKey = "encryptedSymmetricKey.pem";
+    const testEncryptedCidOfEncryptedFontFile =
+      "bafybeigaatp2gbrqht5rgypzsblf2lsy6sxaa47mxga7qtmu4a7buptqve";
+    const testEncryptedFilenameOfEncryptedFontFile = "encryptedFontFile.pem";
 
     await instance.methods
-      .storeEncryptedData(testMessageHash, testEncryptedKey, testEncryptedCid)
+      .storeEncryptedData(
+        testMessageHash,
+        testCidOfEncryptedSymmetricKey,
+        testFilenameOfEncryptedSymmetricKey,
+        testEncryptedCidOfEncryptedFontFile,
+        testEncryptedFilenameOfEncryptedFontFile
+      )
       .send({ from: accounts[0], gas: "1400000" });
 
-    const storedData = await instance.methods.getEncryptedData(testMessageHash).call();
+    const storedData = await instance.methods.messageHashToEncryptedData(testMessageHash).call();
 
-    assert.strictEqual(storedData.encryptedSymmetricKey, testEncryptedKey);
-    assert.strictEqual(storedData.encryptedCid, testEncryptedCid);
+    assert.strictEqual(storedData.cidOfEncryptedSymmetricKey, testCidOfEncryptedSymmetricKey);
+    assert.strictEqual(
+      storedData.filenameOfEncryptedSymmetricKey,
+      testFilenameOfEncryptedSymmetricKey
+    );
+    assert.strictEqual(
+      storedData.encryptedCidOfEncryptedFontFile,
+      testEncryptedCidOfEncryptedFontFile
+    );
+    assert.strictEqual(
+      storedData.encryptedFilenameOfEncryptedFontFile,
+      testEncryptedFilenameOfEncryptedFontFile
+    );
   });
 
   it("updates password status", async () => {
@@ -55,23 +70,17 @@ describe("Handwritten Fonts", () => {
   });
 
   it("stores public key", async () => {
-    const testAddress = accounts[2];
-    const testPublicKey = padToBytes32(
-      "0xabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdef"
-    );
+    const testAddress = accounts[0];
+    const testPublicKeyCid = "bafybeigaatp2gbrqht5rgypzsblf2lsy6sxaa47mxga7qtmu4a7buptqve";
+    const testPublicKeyFilename = "public.pem";
 
-    await instance.methods.storePublicKey(testAddress, testPublicKey).send({ from: accounts[0] });
+    await instance.methods
+      .storePublicKeyData(testPublicKeyCid, testPublicKeyFilename)
+      .send({ from: testAddress, gas: "1400000" });
 
-    const storedPublicKey = await instance.methods.addressToPublicKey(testAddress).call();
+    const storedPublicKeyData = await instance.methods.addressToPublicKeyData(testAddress).call();
 
-    assert.strictEqual(storedPublicKey, testPublicKey);
+    assert.strictEqual(storedPublicKeyData.publicKeyCid, testPublicKeyCid);
+    assert.strictEqual(storedPublicKeyData.publicKeyFilename, testPublicKeyFilename);
   });
 });
-
-function padToBytes32(hexString) {
-  while (hexString.length < 66) {
-    // 2 characters for '0x' and 64 characters for 32 bytes
-    hexString += "0";
-  }
-  return hexString;
-}
