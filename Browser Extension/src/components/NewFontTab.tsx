@@ -1,6 +1,11 @@
 import { useState } from "react";
 
 import { uploadToIPFS } from "../services/UploadToIPFS";
+import {
+  decryptFileSymmetric,
+  encryptFileSymmetric,
+  generateSymmetricKey
+} from "../utils/cryptography/SymmetricEncryption";
 
 const NewFontTab = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -26,17 +31,33 @@ const NewFontTab = () => {
       return;
     }
 
-    setLoadingMessage("Uploading File...");
+    setLoadingMessage("Generating symmetric key...");
     setLoading(true);
 
     try {
-      const { url, cid } = await uploadToIPFS(selectedFile);
+      const key = generateSymmetricKey();
+
+      setLoadingMessage("Encrypting your file...");
+
+      const encryptedFileString = await encryptFileSymmetric(key, selectedFile);
+      console.log("Encrypted file string: ", encryptedFileString);
+
+      const encryptedBlob = new Blob([encryptedFileString], { type: "font/ttf" });
+      const encryptedFileObject = new File([encryptedBlob], selectedFile.name);
+
+      setLoadingMessage("Encrypting your file and uploading to the IPFS Network...");
+
+      const { url, cid } = await uploadToIPFS(encryptedFileObject);
       setUploadedFileUrl(url);
       setUploadedFileCid(cid);
       setUploadedFilename(selectedFile.name);
       console.log("IPFS URL: ", url);
       console.log("IPFS CID: ", cid);
       console.log("Filename: ", selectedFile.name);
+
+      // Decrypt the file to verify it's the same
+      const decryptedFileString = await decryptFileSymmetric(key, encryptedFileString);
+      console.log("Decrypted file string: ", decryptedFileString);
     } catch (error) {
       setErrorMessage(`Error uploading file: ${error}`);
       console.error("Error uploading file: ", error);
