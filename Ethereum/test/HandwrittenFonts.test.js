@@ -21,10 +21,8 @@ describe("Handwritten Fonts", () => {
   });
 
   it("stores encrypted data", async () => {
-    const testMessageHash = "";
-    const testCidOfEncryptedSymmetricKey =
-      "bafybeigaatp2gbrqht5rgypzsblf2lsy6sxaa47mxga7qtmu4a7buptqve";
-    const testFilenameOfEncryptedSymmetricKey = "encryptedSymmetricKey.pem";
+    const testMessageHash = "hello world";
+    const testEncryptedSymmetricKey = "fawodkwaodawdwmdiwkamdikedmeadiea";
     const testEncryptedCidOfEncryptedFontFile =
       "bafybeigaatp2gbrqht5rgypzsblf2lsy6sxaa47mxga7qtmu4a7buptqve";
     const testEncryptedFilenameOfEncryptedFontFile = "encryptedFontFile.pem";
@@ -32,8 +30,7 @@ describe("Handwritten Fonts", () => {
     await instance.methods
       .storeEncryptedData(
         testMessageHash,
-        testCidOfEncryptedSymmetricKey,
-        testFilenameOfEncryptedSymmetricKey,
+        testEncryptedSymmetricKey,
         testEncryptedCidOfEncryptedFontFile,
         testEncryptedFilenameOfEncryptedFontFile
       )
@@ -41,11 +38,7 @@ describe("Handwritten Fonts", () => {
 
     const storedData = await instance.methods.messageHashToEncryptedData(testMessageHash).call();
 
-    assert.strictEqual(storedData.cidOfEncryptedSymmetricKey, testCidOfEncryptedSymmetricKey);
-    assert.strictEqual(
-      storedData.filenameOfEncryptedSymmetricKey,
-      testFilenameOfEncryptedSymmetricKey
-    );
+    assert.strictEqual(storedData.encryptedSymmetricKey, testEncryptedSymmetricKey);
     assert.strictEqual(
       storedData.encryptedCidOfEncryptedFontFile,
       testEncryptedCidOfEncryptedFontFile
@@ -71,16 +64,22 @@ describe("Handwritten Fonts", () => {
 
   it("stores public key", async () => {
     const testAddress = accounts[0];
-    const testPublicKeyCid = "bafybeigaatp2gbrqht5rgypzsblf2lsy6sxaa47mxga7qtmu4a7buptqve";
-    const testPublicKeyFilename = "public.pem";
+    const testPublicKey = `-----BEGIN PUBLIC KEY-----
+    MIIBITANBgkqhkiG9w0BAQEFAAOCAQ4AMIIBCQKCAQBnI22QE17p9Y0rL5dkJj7y
+    UC1Y12NPsFwQMfTLCPMZOjh+dk6h8gGf9jGEw4tft/BevkJUmybBoAgZD8FI/VjD
+    MzwgLv/tnkH+drDtguiIGk9TR/uozlQW0+zKud2qTHYoEAuVh67st57KhOtj9/5O
+    70DkqADJ8yPCY5nnVkOhsm9I121d1hNkmM/CzOGv1QwDdipyPvJLifzEWPzNIJaS
+    yf5lQefIjvLBp8aEeZU6w8dL9s/cIb9zA1LBLQVl2OeqJv7c5h7WUHx9mr3WgIK/
+    E1gp+56ytmIJt+UXcvUOAyshtQ0gN6+zCCBz89lDVYHt9xZ4VVwLI3ykawxiIQB5
+    AgMBAAE=
+    -----END PUBLIC KEY-----`;
 
     await instance.methods
-      .storePublicKeyData(testPublicKeyCid, testPublicKeyFilename)
+      .storePublicKey(testPublicKey)
       .send({ from: testAddress, gas: "1400000" });
 
-    const storedPublicKeyData = await instance.methods.addressToPublicKeyData(testAddress).call();
+    const storedPublicKey = await instance.methods.addressToPublicKey(testAddress).call();
 
-    assert.strictEqual(storedPublicKeyData.publicKeyCid, testPublicKeyCid);
-    assert.strictEqual(storedPublicKeyData.publicKeyFilename, testPublicKeyFilename);
+    assert.strictEqual(storedPublicKey, testPublicKey);
   });
 });

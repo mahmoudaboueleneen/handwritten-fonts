@@ -1,26 +1,32 @@
-import * as crypto from "crypto-browserify";
+import JSEncrypt from "jsencrypt";
+
+import { AsymmetricEncryptionError } from "../errors/AsymmetricEncryptionError";
+import { AsymmetricDecryptionError } from "../errors/AsymmetricDecryptionError";
 
 export function generateKeyPair(): { publicKey: string; privateKey: string } {
-  const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
-    modulusLength: 2048
-  });
-
+  const jsEncrypt = new JSEncrypt({ default_key_size: "2048" });
   return {
-    publicKey: publicKey.export({ type: "pkcs1", format: "pem" }),
-    privateKey: privateKey.export({ type: "pkcs1", format: "pem" })
+    publicKey: jsEncrypt.getPublicKey(),
+    privateKey: jsEncrypt.getPrivateKey()
   };
 }
 
-export function encryptMessage(publicKey: string, message: string): string {
-  const bufferMessage = Buffer.from(message);
-  const encryptedMessage = crypto.publicEncrypt(publicKey, bufferMessage);
-
-  return encryptedMessage.toString("base64");
+export function encryptMessageAsymmetric(publicKey: string, message: string): string {
+  const jsEncrypt = new JSEncrypt();
+  jsEncrypt.setPublicKey(publicKey);
+  const encryptedMessage = jsEncrypt.encrypt(message);
+  if (encryptedMessage === false) {
+    throw new AsymmetricEncryptionError("Asymmetric Encryption failed");
+  }
+  return encryptedMessage;
 }
 
-export function decryptMessage(privateKey: string, encryptedMessage: string): string {
-  const bufferEncryptedMessage = Buffer.from(encryptedMessage, "base64");
-  const decryptedMessage = crypto.privateDecrypt(privateKey, bufferEncryptedMessage);
-
-  return decryptedMessage.toString();
+export function decryptMessageAsymmetric(privateKey: string, encryptedMessage: string): string {
+  const jsEncrypt = new JSEncrypt();
+  jsEncrypt.setPrivateKey(privateKey);
+  const decryptedMessage = jsEncrypt.decrypt(encryptedMessage);
+  if (decryptedMessage === false) {
+    throw new AsymmetricDecryptionError("Asymmetric Decryption failed");
+  }
+  return decryptedMessage;
 }

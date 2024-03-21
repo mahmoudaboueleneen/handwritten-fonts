@@ -82,7 +82,7 @@ const SelectAccountPage = () => {
         (If you can't see your MetaMask account in the dropdown, open MetaMask and connect the account to Handwritten
         Fonts)
       </span>
-      <button className="self-center btn btn-primary" onClick={handleProceedClick}>
+      <button className="self-center w-full btn btn-primary" onClick={handleProceedClick}>
         Proceed
       </button>
     </div>
