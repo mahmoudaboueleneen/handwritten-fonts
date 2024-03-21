@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 import { uploadToIPFS } from "../services/UploadToIPFS";
 import {
@@ -15,6 +15,21 @@ const NewFontTab = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingMessage, setLoadingMessage] = useState<string>("Loading...");
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [privateKeyNotFound, setPrivateKeyNotFound] = useState<boolean>(false);
+  const modalRef = useRef<HTMLDialogElement>(null);
+
+  const openModal = () => {
+    if (modalRef.current) {
+      modalRef.current.showModal();
+    }
+  };
+
+  const closeModal = () => {
+    if (modalRef.current) {
+      modalRef.current.close();
+    }
+  };
 
   const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) {
@@ -24,7 +39,7 @@ const NewFontTab = () => {
     setSelectedFile(e.target.files[0]);
   };
 
-  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const onSubmitUpload = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!selectedFile) {
@@ -51,9 +66,21 @@ const NewFontTab = () => {
       setUploadedFileUrl(url);
       setUploadedFileCid(cid);
       setUploadedFilename(selectedFile.name);
+
       console.log("IPFS URL: ", url);
       console.log("IPFS CID: ", cid);
       console.log("Filename: ", selectedFile.name);
+
+      openModal();
+
+      const encryptedPrivateKey = localStorage.getItem("HandwrittenFonts_pk");
+
+      if (!encryptedPrivateKey) {
+        setPrivateKeyNotFound(true);
+        return;
+      }
+
+      setLoadingMessage("Encrypting your file data and storing it locally...");
 
       // Decrypt the file to verify it's the same
       const decryptedFileString = await decryptFileSymmetric(key, encryptedFileString);
@@ -64,8 +91,11 @@ const NewFontTab = () => {
     } finally {
       setLoadingMessage("");
       setLoading(false);
+      setSelectedFile(null);
     }
   };
+
+  const handleValidatePassword = () => {};
 
   if (loading)
     return (
@@ -79,7 +109,7 @@ const NewFontTab = () => {
     <div className="flex flex-col items-center justify-center h-screen px-10">
       <h1 className="mb-5 text-2xl font-bold text-center">Upload a new font file (TTF Files only)</h1>
 
-      <form onSubmit={onSubmit}>
+      <form onSubmit={onSubmitUpload}>
         <label className="w-full max-w-xs mb-2 form-control">
           <input type="file" onChange={onFileChange} className="w-full max-w-xs file-input file-input-bordered" />
         </label>
@@ -90,6 +120,12 @@ const NewFontTab = () => {
 
         {errorMessage && <span className="mt-3 text-error">{errorMessage}</span>}
       </form>
+
+      {privateKeyNotFound && (
+        <div>
+          Private Key not found, please upload a backup or, as a last resort, generate new public and private keys.
+        </div>
+      )}
 
       <hr />
 
@@ -115,6 +151,27 @@ const NewFontTab = () => {
           </p>
         </div>
       )}
+
+      <dialog ref={modalRef} className="modal">
+        <div className="modal-box">
+          <h3 className="text-lg font-bold">Enter your password to continue</h3>
+          <p className="py-4">Press ESC key or click the button below to close</p>
+          <input
+            type="password"
+            className="w-full input input-bordered join-item"
+            placeholder="Password"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <div className="modal-action">
+            <button className="btn" onClick={closeModal}>
+              Cancel
+            </button>
+            <button className="btn" onClick={handleValidatePassword}>
+              Enter
+            </button>
+          </div>
+        </div>
+      </dialog>
     </div>
   );
 };
