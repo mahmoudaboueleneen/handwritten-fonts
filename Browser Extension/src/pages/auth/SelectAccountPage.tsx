@@ -1,34 +1,45 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+
+import { useAuth } from "../../hooks/useAuth";
+import useEthereum from "../../hooks/useEthereum";
 
 const SelectAccountPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
+  const [loadingMessage, setLoadingMessage] = useState<string>("Starting up Handwritten Fonts...");
   const [accounts, setAccounts] = useState<string[]>([]);
+  const [ethereumObjectNotFound, setEthereumObjectNotFound] = useState<boolean>(false);
   const { selectedAccount, setSelectedAccount } = useAuth();
   const navigate = useNavigate();
+  const ethereum = useEthereum();
 
   useEffect(() => {
     const fetchAccounts = async () => {
-      if (window.ethereum) {
-        console.log("Ethereum is available!", window.ethereum);
+      if (ethereum) {
+        setLoadingMessage("Ethereum is available!" + ethereum);
         try {
-          const accounts = (await window.ethereum.request({ method: "eth_requestAccounts" })) as string[];
-          console.log("Accounts: ", accounts);
-          setAccounts(accounts);
-          if (accounts.length > 0) {
-            setSelectedAccount(accounts[0]);
+          setLoadingMessage("Requesting accounts...");
+          const addresses = await ethereum.request({ method: "eth_requestAccounts" });
+          setLoadingMessage("Accounts: " + addresses);
+          setAccounts(addresses);
+          if (addresses.length > 0) {
+            setSelectedAccount(addresses[0]);
           }
         } catch (err) {
+          setLoadingMessage("Error fetching accounts: " + err);
           console.error(err);
         } finally {
           setLoading(false);
         }
+      } else {
+        console.error("Ethereum object not found!");
+        setEthereumObjectNotFound(true);
+        setLoading(false);
       }
     };
 
     fetchAccounts();
-  }, []);
+  }, [ethereum]);
 
   const handleAccountChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedAccount(event.target.value);
@@ -40,11 +51,19 @@ const SelectAccountPage = () => {
     navigate("/password-page");
   };
 
+  if (ethereumObjectNotFound)
+    return (
+      <div className="flex flex-col items-center justify-center h-screen px-10">
+        <h1 className="pb-3 text-xl font-bold">MetaMask Not Found..</h1>
+        <p>Please install MetaMask to use Handwritten Fonts.</p>
+      </div>
+    );
+
   if (loading)
     return (
       <div className="flex flex-col items-center justify-center h-screen">
         <span className="loading loading-dots loading-lg"></span>
-        <p>Starting up Handwritten Fonts...</p>
+        <p>{loadingMessage}</p>
       </div>
     );
 

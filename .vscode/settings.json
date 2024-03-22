@@ -20,6 +20,8 @@
         "rgypzsblf",
         "sxaa",
         "tailwindcss",
+        "tanstack",
+        "wagmi",
         "zoomable"
     ],
     "java.configuration.updateBuildConfiguration": "disabled"

@@ -7,15 +7,17 @@ import PasswordPage from "./pages/auth/PasswordPage";
 
 const App = () => {
   return (
-    <AuthProvider>
-      <MemoryRouter>
-        <Routes>
-          <Route path="/" element={<SelectAccountPage />} />
-          <Route path="/handwritten-fonts" element={<HandwrittenFonts />} />
-          <Route path="/password-page" element={<PasswordPage />} />
-        </Routes>
-      </MemoryRouter>
-    </AuthProvider>
+    <main className="w-96 h-96">
+      <AuthProvider>
+        <MemoryRouter>
+          <Routes>
+            <Route path="/" element={<SelectAccountPage />} />
+            <Route path="/handwritten-fonts" element={<HandwrittenFonts />} />
+            <Route path="/password-page" element={<PasswordPage />} />
+          </Routes>
+        </MemoryRouter>
+      </AuthProvider>
+    </main>
   );
 };
 

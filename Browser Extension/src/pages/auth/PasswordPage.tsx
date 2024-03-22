@@ -6,7 +6,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { getContractInstance } from "../../utils/ethereum/ContractInstance";
+import { useGetContractInstance } from "../../hooks/useGetContractInstance";
 import { useAuth } from "../../hooks/useAuth";
 import { config } from "../../config/config";
 import { generateKeyPair } from "../../utils/cryptography/AsymmetricEncryption";
@@ -22,6 +22,7 @@ const PasswordPage = () => {
   const [password, setPassword] = useState<string>("");
   const { selectedAccount } = useAuth();
   const navigate = useNavigate();
+  const getContractInstance = useGetContractInstance();
 
   useEffect(() => {
     const checkPasswordCreation = async () => {
@@ -66,7 +67,7 @@ const PasswordPage = () => {
 
       const encryptedPrivateKey = encryptMessageSymmetric(password, privateKey);
       console.log("encryptedPrivateKey:", encryptedPrivateKey);
-      localStorage.setItem("HandwrittenFonts_pk", encryptedPrivateKey);
+      localStorage.setItem(`HandwrittenFonts_${selectedAccount}_pk`, encryptedPrivateKey);
 
       const decryptedPrivateKey = decryptMessageSymmetric(password, encryptedPrivateKey);
       console.log("decryptedPrivateKey:", decryptedPrivateKey);
@@ -95,7 +96,7 @@ const PasswordPage = () => {
     setLoadingMessage("Validating password...");
     setLoading(true);
 
-    const encryptedPrivateKey = localStorage.getItem("HandwrittenFonts_pk");
+    const encryptedPrivateKey = localStorage.getItem(`HandwrittenFonts_${selectedAccount}_pk`);
 
     if (!encryptedPrivateKey) {
       setPrivateKeyNotFound(true);

@@ -60,7 +60,7 @@ const NewFontTab = () => {
       return;
     }
 
-    const encryptedPrivateKey = localStorage.getItem("HandwrittenFonts_pk");
+    const encryptedPrivateKey = localStorage.getItem(`HandwrittenFonts_${selectedAccount}_pk`);
 
     if (!encryptedPrivateKey) {
       setPrivateKeyNotFound(true);
