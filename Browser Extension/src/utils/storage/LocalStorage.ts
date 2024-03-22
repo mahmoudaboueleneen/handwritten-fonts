@@ -1,9 +1,9 @@
-export function addFontToLocalStorage(cid: string, fileName: string, account: string) {
+export function addFontToLocalStorage(cid: string, fileName: string, symmetricKey: string, account: string) {
   const fonts = localStorage.getItem(`HandwrittenFonts_${account}_fonts`);
   const parsedFonts = fonts ? JSON.parse(fonts) : [];
 
   // Create a new font object
-  const newFont = { cid, fileName };
+  const newFont = { cid, fileName, symmetricKey };
 
   parsedFonts.push(newFont);
 

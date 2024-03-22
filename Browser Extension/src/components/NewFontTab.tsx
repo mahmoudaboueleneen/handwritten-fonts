@@ -3,9 +3,14 @@ import { useState, useRef } from "react";
 import { uploadToIPFS } from "../services/UploadToIPFS";
 import {
   decryptFileSymmetric,
+  decryptMessageSymmetric,
   encryptFileSymmetric,
+  encryptMessageSymmetric,
   generateSymmetricKey
 } from "../utils/cryptography/SymmetricEncryption";
+import { SymmetricDecryptionError } from "../utils/errors/SymmetricDecryptionError";
+import { addFontToLocalStorage } from "../utils/storage/LocalStorage";
+import { useAuth } from "../hooks/useAuth";
 
 const NewFontTab = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -15,9 +20,11 @@ const NewFontTab = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingMessage, setLoadingMessage] = useState<string>("Loading...");
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [modalErrorMessage, setModalErrorMessage] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [privateKeyNotFound, setPrivateKeyNotFound] = useState<boolean>(false);
   const modalRef = useRef<HTMLDialogElement>(null);
+  const { selectedAccount } = useAuth();
 
   const openModal = () => {
     if (modalRef.current) {
@@ -39,17 +46,46 @@ const NewFontTab = () => {
     setSelectedFile(e.target.files[0]);
   };
 
-  const onSubmitUpload = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const onUpload = async () => {
+    setErrorMessage("");
+    setModalErrorMessage("");
 
     if (!selectedFile) {
+      setErrorMessage("Please select a file to upload");
       return;
     }
 
-    setLoadingMessage("Generating symmetric key...");
-    setLoading(true);
+    if (!password) {
+      setErrorMessage("Please enter your password to continue");
+      return;
+    }
+
+    const encryptedPrivateKey = localStorage.getItem("HandwrittenFonts_pk");
+
+    if (!encryptedPrivateKey) {
+      setPrivateKeyNotFound(true);
+      return;
+    }
 
     try {
+      decryptMessageSymmetric(password, encryptedPrivateKey);
+
+      closeModal();
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error instanceof SymmetricDecryptionError) {
+          setModalErrorMessage("Incorrect password.");
+        } else {
+          setModalErrorMessage("Incorrect password.");
+        }
+        return;
+      }
+    }
+
+    try {
+      setLoadingMessage("Generating symmetric key...");
+      setLoading(true);
+
       const key = generateSymmetricKey();
 
       setLoadingMessage("Encrypting your file...");
@@ -66,21 +102,19 @@ const NewFontTab = () => {
       setUploadedFileUrl(url);
       setUploadedFileCid(cid);
       setUploadedFilename(selectedFile.name);
-
       console.log("IPFS URL: ", url);
       console.log("IPFS CID: ", cid);
       console.log("Filename: ", selectedFile.name);
 
-      openModal();
-
-      const encryptedPrivateKey = localStorage.getItem("HandwrittenFonts_pk");
-
-      if (!encryptedPrivateKey) {
-        setPrivateKeyNotFound(true);
-        return;
-      }
-
       setLoadingMessage("Encrypting your file data and storing it locally...");
+
+      // Encrypt the file data and store it locally
+      const encryptedCid = encryptMessageSymmetric(password, cid);
+      const encryptedFilename = encryptMessageSymmetric(password, selectedFile.name);
+      const encryptedSymmetricKey = encryptMessageSymmetric(password, key);
+
+      // Save the font to local storage
+      addFontToLocalStorage(encryptedCid, encryptedFilename, encryptedSymmetricKey, selectedAccount);
 
       // Decrypt the file to verify it's the same
       const decryptedFileString = await decryptFileSymmetric(key, encryptedFileString);
@@ -95,8 +129,6 @@ const NewFontTab = () => {
     }
   };
 
-  const handleValidatePassword = () => {};
-
   if (loading)
     return (
       <div className="flex flex-col items-center justify-center h-screen px-5">
@@ -109,17 +141,15 @@ const NewFontTab = () => {
     <div className="flex flex-col items-center justify-center h-screen px-10">
       <h1 className="mb-5 text-2xl font-bold text-center">Upload a new font file (TTF Files only)</h1>
 
-      <form onSubmit={onSubmitUpload}>
-        <label className="w-full max-w-xs mb-2 form-control">
-          <input type="file" onChange={onFileChange} className="w-full max-w-xs file-input file-input-bordered" />
-        </label>
+      <label className="w-full max-w-xs mb-2 form-control">
+        <input type="file" onChange={onFileChange} className="w-full max-w-xs file-input file-input-bordered" />
+      </label>
 
-        <button className="w-full btn btn-primary" disabled={!selectedFile}>
-          Upload File
-        </button>
+      <button className="w-full btn btn-primary" disabled={!selectedFile} onClick={() => openModal()}>
+        Upload File
+      </button>
 
-        {errorMessage && <span className="mt-3 text-error">{errorMessage}</span>}
-      </form>
+      {errorMessage && <span className="mt-3 text-error">{errorMessage}</span>}
 
       {privateKeyNotFound && (
         <div>
@@ -149,13 +179,16 @@ const NewFontTab = () => {
             a CID: <span className="font-medium">{uploadedFileCid}</span> and file name:{" "}
             <span className="font-medium">{uploadedFilename}</span>
           </p>
+          <p>Your font data has been encrypted and stored locally on your device.</p>
         </div>
       )}
 
       <dialog ref={modalRef} className="modal">
         <div className="modal-box">
-          <h3 className="text-lg font-bold">Enter your password to continue</h3>
-          <p className="py-4">Press ESC key or click the button below to close</p>
+          <h3 className="text-lg font-bold mb-7">Enter your password to continue</h3>
+
+          {modalErrorMessage && <span className="my-5 text-center text-error">{modalErrorMessage}</span>}
+
           <input
             type="password"
             className="w-full input input-bordered join-item"
@@ -166,7 +199,7 @@ const NewFontTab = () => {
             <button className="btn" onClick={closeModal}>
               Cancel
             </button>
-            <button className="btn" onClick={handleValidatePassword}>
+            <button className="btn btn-success" onClick={onUpload}>
               Enter
             </button>
           </div>
