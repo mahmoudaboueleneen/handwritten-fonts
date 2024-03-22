@@ -6,12 +6,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { useGetContractInstance } from "../../hooks/useGetContractInstance";
 import { useAuth } from "../../hooks/useAuth";
-import { config } from "../../config/config";
 import { generateKeyPair } from "../../utils/cryptography/AsymmetricEncryption";
 import { encryptMessageSymmetric, decryptMessageSymmetric } from "../../utils/cryptography/SymmetricEncryption";
 import { SymmetricDecryptionError } from "../../utils/errors/SymmetricDecryptionError";
+import useEthereum from "../../hooks/useEthereum";
 
 const PasswordPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -22,7 +21,7 @@ const PasswordPage = () => {
   const [password, setPassword] = useState<string>("");
   const { selectedAccount } = useAuth();
   const navigate = useNavigate();
-  const getContractInstance = useGetContractInstance();
+  const ethereum = useEthereum();
 
   useEffect(() => {
     const checkPasswordCreation = async () => {
@@ -30,10 +29,11 @@ const PasswordPage = () => {
       setLoading(true);
 
       try {
-        const contractInstance = getContractInstance(config.deployedContractAddress);
-        const response = (await contractInstance.methods
-          .checkPasswordStatus()
-          .call({ from: selectedAccount })) as boolean;
+        const response = (await ethereum.contractCall(
+          "checkPasswordStatus",
+          [],
+          [{ from: selectedAccount }]
+        )) as boolean;
 
         setPasswordCreated(response);
       } catch (err) {
@@ -45,7 +45,7 @@ const PasswordPage = () => {
     };
 
     checkPasswordCreation();
-  }, [selectedAccount]);
+  }, [ethereum, selectedAccount]);
 
   const onSubmitCreatePassword = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -60,10 +60,8 @@ const PasswordPage = () => {
     console.log("privateKey:", privateKey);
 
     try {
-      const contractInstance = getContractInstance(config.deployedContractAddress);
-
       setLoadingMessage("Storing your public key on Ethereum...");
-      await contractInstance.methods.storePublicKey(publicKey).send({ from: selectedAccount });
+      await ethereum.contractSend("storePublicKey", [publicKey], [{ from: selectedAccount }]);
 
       const encryptedPrivateKey = encryptMessageSymmetric(password, privateKey);
       console.log("encryptedPrivateKey:", encryptedPrivateKey);
@@ -73,11 +71,9 @@ const PasswordPage = () => {
       console.log("decryptedPrivateKey:", decryptedPrivateKey);
 
       setLoadingMessage("Updating MetaMask account linking status, hang tight...");
-      await contractInstance.methods.updatePasswordStatus(true).send({ from: selectedAccount });
+      await ethereum.contractSend("updatePasswordStatus", [true], [{ from: selectedAccount }]);
 
-      const response = (await contractInstance.methods
-        .checkPasswordStatus()
-        .call({ from: selectedAccount })) as boolean;
+      const response = (await ethereum.contractSend("checkPasswordStatus", [], [{ from: selectedAccount }])) as boolean;
 
       setPasswordCreated(response);
     } catch (err) {

@@ -15,11 +15,13 @@ const contractInstance = new web3Instance.eth.Contract(compiledContract.abi, con
 window.addEventListener("message", (event) => {
   if (event.source !== window) return; // We only accept messages from ourselves
 
-  if (event.data.type && event.data.type === "CALL_ETHEREUM_METHOD") {
-    if (event.data.method === "request") {
-      callEthereumMethod(event.data.method, ...event.data.args);
-    } else {
-      callContractMethod(event.data.method, event.data.type, ...event.data.args);
+  if (event.data.type) {
+    if (event.data.type === "CALL_ETHEREUM_METHOD") {
+      callEthereumMethod(event.data.method, ...event.data.options.methodArgs);
+    } else if (event.data.type === "CALL_CONTRACT_METHOD") {
+      callContractMethod(event.data.method, "call", event.data.options.methodArgs, event.data.options.callArgs);
+    } else if (event.data.type === "SEND_CONTRACT_METHOD") {
+      callContractMethod(event.data.method, "send", event.data.options.methodArgs, event.data.options.sendArgs);
     }
   }
 });
@@ -47,17 +49,17 @@ function callEthereumMethod(method: string, ...args: any[]) {
     });
 }
 
-function callContractMethod(method: string, type: string, ...args: any[]) {
+function callContractMethod(method: string, type: "call" | "send", methodArgs: any[], callArgs: any[]) {
   if (!contractInstance) {
     throw new Error("Contract instance is not initialized");
   }
 
-  (contractInstance.methods[method](...args) as any)
-    [type]()
+  (contractInstance.methods[method](...methodArgs) as any)
+    [type](...callArgs)
     .then((result: any) => {
       window.postMessage(
         {
-          type: "ETHEREUM_METHOD_RESULT",
+          type: type === "call" ? "CONTRACT_CALL_RESULT" : "CONTRACT_SEND_RESULT",
           result
         },
         "*"
@@ -66,7 +68,7 @@ function callContractMethod(method: string, type: string, ...args: any[]) {
     .catch((error: any) => {
       window.postMessage(
         {
-          type: "ETHEREUM_METHOD_ERROR",
+          type: type === "call" ? "CONTRACT_CALL_ERROR" : "CONTRACT_SEND_ERROR",
           error: error.message
         },
         "*"
