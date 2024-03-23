@@ -1,4 +1,4 @@
-const ReadTab = () => {
+const ReadMessage = () => {
   const onChangePageFont = async () => {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     chrome.scripting.executeScript<string[], void>({
@@ -19,4 +19,4 @@ const ReadTab = () => {
   );
 };
 
-export default ReadTab;
+export default ReadMessage;

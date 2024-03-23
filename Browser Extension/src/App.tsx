@@ -11,9 +11,11 @@ const App = () => {
       <AuthProvider>
         <MemoryRouter>
           <Routes>
-            <Route path="/" element={<SelectAccountPage />} />
+            {/* <Route path="/" element={<SelectAccountPage />} />
             <Route path="/handwritten-fonts" element={<HandwrittenFonts />} />
-            <Route path="/password-page" element={<PasswordPage />} />
+            <Route path="/password-page" element={<PasswordPage />} /> */}
+
+            <Route path="/" element={<HandwrittenFonts />} />
           </Routes>
         </MemoryRouter>
       </AuthProvider>

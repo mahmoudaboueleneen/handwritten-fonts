@@ -12,7 +12,7 @@ import { SymmetricDecryptionError } from "../../../utils/errors/SymmetricDecrypt
 import { addFontToLocalStorage } from "../../../utils/storage/LocalStorage";
 import { useAuth } from "../../../hooks/useAuth";
 
-const NewFontTab = () => {
+const NewFont = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadedFileUrl, setUploadedFileUrl] = useState<string>("");
   const [uploadedFileCid, setUploadedFileCid] = useState<string>("");
@@ -138,7 +138,7 @@ const NewFontTab = () => {
     );
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen px-10">
+    <div className="flex flex-col items-center justify-center h-full px-10">
       <h1 className="mb-5 text-2xl font-bold text-center">Upload a new font file (TTF Files only)</h1>
 
       <label className="w-full max-w-xs mb-2 form-control">
@@ -209,4 +209,4 @@ const NewFontTab = () => {
   );
 };
 
-export default NewFontTab;
+export default NewFont;

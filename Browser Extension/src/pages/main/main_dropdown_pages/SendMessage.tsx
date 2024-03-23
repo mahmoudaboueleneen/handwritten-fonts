@@ -12,7 +12,7 @@ import { SymmetricDecryptionError } from "../../../utils/errors/SymmetricDecrypt
 import { Contact } from "../../../types/Contact.interface";
 import { encryptMessageAsymmetric } from "../../../utils/cryptography/AsymmetricEncryption";
 
-const SendTab = () => {
+const SendMessage = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingMessage, setLoadingMessage] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -179,8 +179,8 @@ const SendTab = () => {
     );
 
   return (
-    <div className="px-5 space-y-3">
-      <h1 className="text-2xl font-bold text-center">Send a message in your font</h1>
+    <div className="flex flex-col items-center justify-center h-full px-10 space-y-5">
+      <h1 className="text-2xl font-bold text-start">Send a message in one of your fonts.</h1>
 
       <select className="w-full max-w-xs select select-bordered" onChange={(e) => setRecipientAddress(e.target.value)}>
         <option disabled selected>
@@ -195,7 +195,8 @@ const SendTab = () => {
 
       <textarea
         placeholder="Message"
-        className="w-full max-w-xs textarea textarea-bordered textarea-lg"
+        className="w-full max-w-xs textarea textarea-bordered"
+        rows={5}
         value={enteredMessage}
         onChange={(e) => setEnteredMessage(e.target.value)}
       ></textarea>
@@ -284,4 +285,4 @@ const SendTab = () => {
   );
 };
 
-export default SendTab;
+export default SendMessage;
