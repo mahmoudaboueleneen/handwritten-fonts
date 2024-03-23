@@ -7,7 +7,7 @@ import PasswordPage from "./pages/auth/PasswordPage";
 
 const App = () => {
   return (
-    <main className="w-96 h-96">
+    <main className="app-container">
       <AuthProvider>
         <HashRouter>
           <Routes>
