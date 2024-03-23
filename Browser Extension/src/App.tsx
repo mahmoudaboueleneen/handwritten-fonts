@@ -1,4 +1,4 @@
-import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { HashRouter, Route, Routes } from "react-router-dom";
 
 import { AuthProvider } from "./contexts/AuthContext";
 import SelectAccountPage from "./pages/auth/SelectAccountPage";
@@ -9,13 +9,13 @@ const App = () => {
   return (
     <main className="w-96 h-96">
       <AuthProvider>
-        <MemoryRouter>
+        <HashRouter>
           <Routes>
             <Route path="/" element={<SelectAccountPage />} />
             <Route path="/handwritten-fonts" element={<HandwrittenFonts />} />
             <Route path="/password-page" element={<PasswordPage />} />
           </Routes>
-        </MemoryRouter>
+        </HashRouter>
       </AuthProvider>
     </main>
   );

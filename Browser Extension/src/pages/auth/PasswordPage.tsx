@@ -75,6 +75,7 @@ const PasswordPage = () => {
       setLoadingMessage("Updating MetaMask account linking status, hang tight...");
       await ethereum.contractSend("updatePasswordStatus", [true], [{ from: selectedAccount }]);
 
+      setLoadingMessage("Rechecking password status...");
       const response = (await ethereum.contractSend("checkPasswordStatus", [], [{ from: selectedAccount }])) as boolean;
 
       setPasswordCreated(response);

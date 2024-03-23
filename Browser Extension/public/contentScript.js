@@ -31,9 +31,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       if (event.source !== window) return;
 
       if (event.data.type && event.data.type.endsWith("_RESULT")) {
-        sendResponse({ result: event.data.result });
+        // Convert BigInt values (non-serializable) to strings
+        const result = JSON.parse(
+          JSON.stringify(event.data.result, (_, v) => (typeof v === "bigint" ? v.toString() : v))
+        );
+        console.log("event.data.result:", result);
+        sendResponse({ result: result });
         window.removeEventListener("message", responseListener);
       } else if (event.data.type && event.data.type.endsWith("_ERROR")) {
+        console.log("event.data.error:", event.data.error);
         sendResponse({ error: event.data.error });
         window.removeEventListener("message", responseListener);
       }
