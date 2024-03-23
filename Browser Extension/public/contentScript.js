@@ -6,7 +6,7 @@ function injectScript(file_path) {
   (document.head || document.documentElement).appendChild(script);
 }
 
-injectScript(chrome.runtime.getURL("assets/injectedScript-CEBrU7ou.js"));
+injectScript(chrome.runtime.getURL("assets/injectedScript-CVX7b_kC.js"));
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.method) {
@@ -26,16 +26,22 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       "*"
     );
 
-    window.addEventListener("message", (event) => {
-      if (event.source !== window) return; // We only accept messages from ourselves
+    // Set up a one-time listener for the response from the injected script
+    const responseListener = (event) => {
+      if (event.source !== window) return;
 
       if (event.data.type && event.data.type.endsWith("_RESULT")) {
         sendResponse({ result: event.data.result });
+        window.removeEventListener("message", responseListener);
       } else if (event.data.type && event.data.type.endsWith("_ERROR")) {
         sendResponse({ error: event.data.error });
+        window.removeEventListener("message", responseListener);
       }
-    });
+    };
 
-    return true; // Will respond asynchronously.
+    window.addEventListener("message", responseListener);
+
+    // Return true to indicate that the response will be sent asynchronously
+    return true;
   }
 });

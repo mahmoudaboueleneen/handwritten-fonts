@@ -39,7 +39,7 @@ const SelectAccountPage = () => {
     };
 
     fetchAccounts();
-  }, [ethereum]);
+  }, []);
 
   const handleAccountChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedAccount(event.target.value);

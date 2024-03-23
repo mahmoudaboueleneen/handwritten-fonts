@@ -30,6 +30,7 @@ function callEthereumMethod(method: string, ...args: any[]) {
   (window.ethereum as any)
     [method](...args)
     .then((result: any) => {
+      console.log("Ethereum method result:", result);
       window.postMessage(
         {
           type: "ETHEREUM_METHOD_RESULT",
@@ -39,6 +40,7 @@ function callEthereumMethod(method: string, ...args: any[]) {
       );
     })
     .catch((error: any) => {
+      console.error("Ethereum method error:", error);
       window.postMessage(
         {
           type: "ETHEREUM_METHOD_ERROR",
@@ -57,6 +59,7 @@ function callContractMethod(method: string, type: "call" | "send", methodArgs: a
   (contractInstance.methods[method](...methodArgs) as any)
     [type](...callArgs)
     .then((result: any) => {
+      console.log("Contract method result:", result);
       window.postMessage(
         {
           type: type === "call" ? "CONTRACT_CALL_RESULT" : "CONTRACT_SEND_RESULT",
@@ -66,6 +69,7 @@ function callContractMethod(method: string, type: "call" | "send", methodArgs: a
       );
     })
     .catch((error: any) => {
+      console.error("Contract method error:", error);
       window.postMessage(
         {
           type: type === "call" ? "CONTRACT_CALL_ERROR" : "CONTRACT_SEND_ERROR",

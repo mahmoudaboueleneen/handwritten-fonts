@@ -34,9 +34,11 @@ const PasswordPage = () => {
           [],
           [{ from: selectedAccount }]
         )) as boolean;
-
+        setLoadingMessage("Response: " + response);
         setPasswordCreated(response);
       } catch (err) {
+        setLoadingMessage("Response: " + err);
+
         console.error(err);
       } finally {
         setLoadingMessage("");
@@ -45,7 +47,7 @@ const PasswordPage = () => {
     };
 
     checkPasswordCreation();
-  }, [ethereum, selectedAccount]);
+  }, []);
 
   const onSubmitCreatePassword = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
