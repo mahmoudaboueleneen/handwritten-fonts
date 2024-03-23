@@ -70,6 +70,8 @@ const Contacts = () => {
         <h1 className="mb-6 text-2xl font-bold">No Contacts Found</h1>
       )}
 
+      <div className="mb-6 divider"></div>
+
       <label className="flex items-center w-full gap-2 mb-3 input input-bordered">
         <input
           type="text"

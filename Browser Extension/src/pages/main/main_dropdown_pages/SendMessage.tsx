@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faClipboard } from "@fortawesome/free-solid-svg-icons";
 
 import { getContactsFromLocalStorage, getFontsFromLocalStorage } from "../../../utils/storage/LocalStorage";
 import { useAuth } from "../../../hooks/useAuth";
@@ -11,6 +13,7 @@ import { decryptMessageSymmetric } from "../../../utils/cryptography/SymmetricEn
 import { SymmetricDecryptionError } from "../../../utils/errors/SymmetricDecryptionError";
 import { Contact } from "../../../types/Contact.interface";
 import { encryptMessageAsymmetric } from "../../../utils/cryptography/AsymmetricEncryption";
+import { HandwrittenFontsSignature } from "../../../constants/HandwrittenFontsSignature";
 
 const SendMessage = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -132,6 +135,14 @@ const SendMessage = () => {
       [{ from: selectedAccount }]
     );
 
+    if (!recipientPublicKey) {
+      setErrorMessage(
+        "Recipient's public key not found. Make sure the recipient has created a Handwritten Fonts account."
+      );
+      setLoading(false);
+      return;
+    }
+
     setLoadingMessage("Encrypting data and encoding font into message...");
 
     const uuid = uuidv4();
@@ -152,7 +163,7 @@ const SendMessage = () => {
         [{ from: selectedAccount }]
       );
 
-      setOutputMessage(`${messageHash}.${uuid}`);
+      setOutputMessage(`${combinedMessage}${HandwrittenFontsSignature}`);
     } catch (error) {
       setErrorMessage("Error storing message hash on ethereum");
       console.error("Error storing message hash on ethereum", error);
@@ -240,18 +251,16 @@ const SendMessage = () => {
             />
           </svg>
           <p>
-            You can now copy this message and send via any messaging platform to your recipient. Only your selected
-            recipient will be able to view it in your font, but they must be using both the MetaMask and Handwritten
-            Fonts extensions.
+            You can now copy this message and send it as it is via any messaging platform to your recipient. Only your
+            selected recipient will be able to view it in your font, but they must be running both MetaMask and
+            Handwritten Fonts.
           </p>
 
           <span>{outputMessage}</span>
 
           <CopyToClipboard text={outputMessage} onCopy={handleCopy}>
             <button>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                <path d="M208 0H332.1c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9V336c0 26.5-21.5 48-48 48H208c-26.5 0-48-21.5-48-48V48c0-26.5 21.5-48 48-48zM48 128h80v64H64V448H256V416h64v48c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V176c0-26.5 21.5-48 48-48z" />
-              </svg>
+              <FontAwesomeIcon icon={faClipboard} />
             </button>
           </CopyToClipboard>
 

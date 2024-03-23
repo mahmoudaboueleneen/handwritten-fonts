@@ -1,5 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faAddressBook,
+  faCircleUser,
+  faDownload,
+  faUpload,
+  faPaperPlane,
+  faBookOpen,
+  faFont,
+  faPenFancy
+} from "@fortawesome/free-solid-svg-icons";
+
 import NewFont from "./main_dropdown_pages/NewFont";
 import MyFonts from "./main_dropdown_pages/MyFonts";
 import SendMessage from "./main_dropdown_pages/SendMessage";
@@ -10,17 +22,17 @@ import ExportData from "./avatar_dropdown_pages/ExportData";
 import MyAccount from "./avatar_dropdown_pages/MyAccount";
 
 const mainDropdownItems = [
-  { name: "Read", component: ReadMessage },
-  { name: "Send", component: SendMessage },
-  { name: "My Fonts", component: MyFonts },
-  { name: "New Font", component: NewFont }
+  { name: "Read Messages", component: ReadMessage, icon: <FontAwesomeIcon icon={faBookOpen} /> },
+  { name: "Send Message", component: SendMessage, icon: <FontAwesomeIcon icon={faPaperPlane} /> },
+  { name: "My Fonts", component: MyFonts, icon: <FontAwesomeIcon icon={faFont} /> },
+  { name: "Upload New Font", component: NewFont, icon: <FontAwesomeIcon icon={faPenFancy} /> }
 ];
 
 const avatarDropdownItems = [
-  { name: "My Account", component: MyAccount },
-  { name: "Contacts", component: Contacts },
-  { name: "Restore my Data", component: RestoreData },
-  { name: "Export my Data", component: ExportData }
+  { name: "My Account", component: MyAccount, icon: <FontAwesomeIcon icon={faCircleUser} /> },
+  { name: "Contacts", component: Contacts, icon: <FontAwesomeIcon icon={faAddressBook} /> },
+  { name: "Restore my Data", component: RestoreData, icon: <FontAwesomeIcon icon={faUpload} /> },
+  { name: "Export my Data", component: ExportData, icon: <FontAwesomeIcon icon={faDownload} /> }
 ];
 
 const dropdownItems = [...mainDropdownItems, ...avatarDropdownItems];
@@ -52,6 +64,7 @@ const HandwrittenFonts = () => {
               {mainDropdownItems.map((item, index) => (
                 <li key={index}>
                   <a onClick={() => setActiveItem(item.name)} className={activeItem === item.name ? "active" : ""}>
+                    {item.icon && item.icon}
                     {item.name}
                   </a>
                 </li>
@@ -81,6 +94,7 @@ const HandwrittenFonts = () => {
               {avatarDropdownItems.map((item, index) => (
                 <li key={index}>
                   <a onClick={() => setActiveItem(item.name)} className={activeItem === item.name ? "active" : ""}>
+                    {item.icon && item.icon}
                     {item.name}
                   </a>
                 </li>

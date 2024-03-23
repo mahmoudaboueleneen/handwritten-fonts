@@ -77,8 +77,8 @@ const SelectAccountPage = () => {
 
   return (
     <div className="flex flex-col items-start justify-center h-screen px-10">
-      <h1 className="self-center text-lg font-bold">
-        Select your MetaMask Account{" "}
+      <h1 className="self-center mb-3 text-lg font-bold">
+        Select a MetaMask Account{" "}
         <div className="dropdown dropdown-end">
           <div tabIndex={0} role="button" className="btn btn-circle btn-ghost btn-xs text-info">
             <svg
@@ -98,8 +98,7 @@ const SelectAccountPage = () => {
           </div>
           <div tabIndex={0} className="card compact dropdown-content z-[1] shadow bg-base-100 rounded-box w-64">
             <div tabIndex={0} className="card-body">
-              <h2 className="card-title">Account Linking in Handwritten Fonts</h2>
-              <p>
+              <p className="text-xs font-normal text-muted">
                 Handwritten Fonts uses MetaMask accounts instead of its own accounts. Each MetaMask account you link to
                 our app can be considered as a Handwritten Fonts account!
               </p>
