@@ -1,8 +1,8 @@
 import { useState } from "react";
-import NewFontTab from "../../components/NewFontTab";
-import MyFontsTab from "../../components/MyFontsTab";
-import SendTab from "../../components/SendTab";
-import ReadTab from "../../components/ReadTab";
+import NewFontTab from "./tabs/NewFontTab";
+import MyFontsTab from "./tabs/MyFontsTab";
+import SendTab from "./tabs/SendTab";
+import ReadTab from "./tabs/ReadTab";
 
 const tabs = [
   { name: "Read", component: ReadTab },

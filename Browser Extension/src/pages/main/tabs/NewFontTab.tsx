@@ -1,16 +1,16 @@
 import { useState, useRef } from "react";
 
-import { uploadToIPFS } from "../services/UploadToIPFS";
+import { uploadToIPFS } from "../../../services/UploadToIPFS";
 import {
   decryptFileSymmetric,
   decryptMessageSymmetric,
   encryptFileSymmetric,
   encryptMessageSymmetric,
   generateSymmetricKey
-} from "../utils/cryptography/SymmetricEncryption";
-import { SymmetricDecryptionError } from "../utils/errors/SymmetricDecryptionError";
-import { addFontToLocalStorage } from "../utils/storage/LocalStorage";
-import { useAuth } from "../hooks/useAuth";
+} from "../../../utils/cryptography/SymmetricEncryption";
+import { SymmetricDecryptionError } from "../../../utils/errors/SymmetricDecryptionError";
+import { addFontToLocalStorage } from "../../../utils/storage/LocalStorage";
+import { useAuth } from "../../../hooks/useAuth";
 
 const NewFontTab = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);

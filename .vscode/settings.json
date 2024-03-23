@@ -21,6 +21,7 @@
         "sxaa",
         "tailwindcss",
         "tanstack",
+        "uuidv",
         "wagmi",
         "zoomable"
     ],
