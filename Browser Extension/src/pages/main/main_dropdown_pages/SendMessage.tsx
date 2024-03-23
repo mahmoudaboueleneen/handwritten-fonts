@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -13,7 +14,7 @@ import { decryptMessageSymmetric } from "../../../utils/cryptography/SymmetricEn
 import { SymmetricDecryptionError } from "../../../utils/errors/SymmetricDecryptionError";
 import { Contact } from "../../../types/Contact.interface";
 import { encryptMessageAsymmetric } from "../../../utils/cryptography/AsymmetricEncryption";
-import { HandwrittenFontsSignature } from "../../../constants/HandwrittenFontsSignature";
+import { signMessage } from "../../../utils/signature/SignMessage";
 
 const SendMessage = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -163,7 +164,7 @@ const SendMessage = () => {
         [{ from: selectedAccount }]
       );
 
-      setOutputMessage(`${combinedMessage}${HandwrittenFontsSignature}`);
+      setOutputMessage(signMessage(enteredMessage, uuid));
     } catch (error) {
       setErrorMessage("Error storing message hash on ethereum");
       console.error("Error storing message hash on ethereum", error);
@@ -236,36 +237,39 @@ const SendMessage = () => {
       )}
 
       {outputMessage && (
-        <div role="alert" className="alert alert-success">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-6 h-6 stroke-current shrink-0"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
+        <>
+          <div role="alert" className="alert alert-success">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-6 h-6 stroke-current shrink-0"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+
+            <CopyToClipboard text={outputMessage} onCopy={handleCopy}>
+              <button>
+                <FontAwesomeIcon icon={faClipboard} />
+              </button>
+            </CopyToClipboard>
+
+            <span>{outputMessage}</span>
+
+            {isCopied && <span>Copied!</span>}
+          </div>
+
           <p>
             You can now copy this message and send it as it is via any messaging platform to your recipient. Only your
             selected recipient will be able to view it in your font, but they must be running both MetaMask and
             Handwritten Fonts.
           </p>
-
-          <span>{outputMessage}</span>
-
-          <CopyToClipboard text={outputMessage} onCopy={handleCopy}>
-            <button>
-              <FontAwesomeIcon icon={faClipboard} />
-            </button>
-          </CopyToClipboard>
-
-          {isCopied && <span>Copied!</span>}
-        </div>
+        </>
       )}
 
       <dialog ref={modalRef} className="modal">

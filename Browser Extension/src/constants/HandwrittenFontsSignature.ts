@@ -1,1 +1,2 @@
-export const HandwrittenFontsSignature = "[HandwrittenFonts<1.0.0>]";
+export const HANDWRITTEN_FONTS_CURRENT_VERSION = "1.0.0";
+export const HANDWRITTEN_FONTS_SIGNATURE = `HandwrittenFonts<${HANDWRITTEN_FONTS_CURRENT_VERSION}>`;

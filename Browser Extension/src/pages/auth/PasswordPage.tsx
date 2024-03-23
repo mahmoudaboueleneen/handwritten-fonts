@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /**
  * @dev The user can enter their password to log in if they have already
  *      created a password linked to their chosen MetaMask account.
