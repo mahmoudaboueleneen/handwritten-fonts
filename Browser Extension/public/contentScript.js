@@ -8,7 +8,7 @@ function injectScript(file_path) {
 
 injectScript(chrome.runtime.getURL("assets/injectedScript-CVX7b_kC.js"));
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
   if (request.method) {
     let messageType;
     if (request.method === "request") {
@@ -51,3 +51,28 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 });
+
+const observer = new MutationObserver((mutations) => {
+  mutations.forEach((mutation) => {
+    mutation.addedNodes.forEach((node) => {
+      // Recursively check all descendants of the added node
+      const checkNodeAndDescendants = (node) => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const messageRegex = /(.*)##\|\|tag:HandwrittenFontsExt<1\.0\.0>\|\|uuid:([a-f0-9-]{36})\|\|##/;
+          const match = node.textContent.match(messageRegex);
+          if (match) {
+            console.log("Message detected:", match[0]);
+            node.parentElement.setAttribute("data-uuid", match[2]);
+            chrome.runtime.sendMessage({ type: "DETECTED_MESSAGE", message: match[0], uuid: match[2] });
+          }
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          node.childNodes.forEach(checkNodeAndDescendants);
+        }
+      };
+
+      checkNodeAndDescendants(node);
+    });
+  });
+});
+
+observer.observe(document.body, { childList: true, subtree: true });
