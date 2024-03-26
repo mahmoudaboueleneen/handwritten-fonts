@@ -27,6 +27,10 @@ export function removeFontFromLocalStorage(account: string, fileName: string) {
   localStorage.setItem(`HandwrittenFonts_${account}_fonts`, JSON.stringify(updatedFonts));
 }
 
+export function clearFontsFromLocalStorage(account: string) {
+  localStorage.removeItem(`HandwrittenFonts_${account}_fonts`);
+}
+
 export function addContactToLocalStorage(name: string, address: string, account: string) {
   const contacts = localStorage.getItem(`HandwrittenFonts_${account}_contacts`);
   const parsedContacts = contacts ? JSON.parse(contacts) : [];

@@ -115,27 +115,23 @@ const ReadMessage = () => {
           setLoadingMessage("Decrypting your file...");
 
           const decryptedFileString = await decryptFileSymmetric(symmetricKey, encryptedFileString);
-          setErrorMessage("Decrypted file string: " + decryptedFileString);
-          console.log("Decrypted file string: ", decryptedFileString);
 
-          // Convert the decrypted string to a Uint8Array
           const charList = decryptedFileString.split("");
           const uint8Array = new Uint8Array(charList.map((ch) => ch.charCodeAt(0)));
 
-          // Convert the Uint8Array back to a Blob and then to a File
           const decryptedBlob = new Blob([uint8Array.buffer], { type: "font/ttf" });
-          // const decryptedFileObject = new File([decryptedBlob], filenameOfEncryptedFontFile);
 
-          // Now you can use decryptedFileObject
-          const url = URL.createObjectURL(decryptedBlob);
+          const dataURLReader = new FileReader();
+          dataURLReader.onloadend = async () => {
+            const decryptedFileDataURL = dataURLReader.result as string;
 
-          const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-          chrome.scripting.executeScript({
-            target: { tabId: tab.id! },
-            args: [fontFileDataURL, uuid],
-            func: (fontFileDataURL, uuid) => {
-              const style = document.createElement("style");
-              style.textContent = `
+            const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+            chrome.scripting.executeScript({
+              target: { tabId: tab.id! },
+              args: [decryptedFileDataURL, uuid],
+              func: (fontFileDataURL, uuid) => {
+                const style = document.createElement("style");
+                style.textContent = `
                   @font-face {
                     font-family: 'CustomFont';
                     src: url(${fontFileDataURL});
@@ -144,14 +140,19 @@ const ReadMessage = () => {
                     font-family: 'CustomFont';
                   }
                 `;
-              document.head.appendChild(style);
+                document.head.appendChild(style);
 
-              const element = document.querySelector(`[data-uuid="${uuid}"]`);
-              if (element) {
-                (element as HTMLElement).style.fontFamily = "CustomFont";
+                const element = document.querySelector(`[data-uuid="${uuid}"]`);
+                if (element) {
+                  (element as HTMLElement).style.fontFamily = "CustomFont";
+                }
               }
-            }
-          });
+            });
+          };
+          dataURLReader.onerror = () => {
+            setErrorMessage("Failed to read the decrypted file as a data URL");
+          };
+          dataURLReader.readAsDataURL(decryptedBlob);
         } catch (error) {
           if (error instanceof Error) {
             setErrorMessage("Decryption failed: " + error.message);
