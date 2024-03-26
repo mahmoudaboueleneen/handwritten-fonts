@@ -255,11 +255,11 @@ const SendMessage = () => {
 
             <CopyToClipboard text={outputMessage} onCopy={handleCopy}>
               <button>
-                <FontAwesomeIcon icon={faClipboard} />
+                <FontAwesomeIcon icon={faClipboard} size="3x" />
               </button>
             </CopyToClipboard>
 
-            <span>{outputMessage}</span>
+            <span className="break-all">{outputMessage}</span>
 
             {isCopied && <span>Copied!</span>}
           </div>

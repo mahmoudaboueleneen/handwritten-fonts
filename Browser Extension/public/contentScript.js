@@ -63,6 +63,7 @@ const observer = new MutationObserver((mutations) => {
           if (match) {
             console.log("Message detected:", match[1]);
             node.parentElement.setAttribute("data-uuid", match[2]);
+            node.parentElement.textContent = match[1];
             chrome.runtime.sendMessage({ type: "DETECTED_MESSAGE", message: match[1], uuid: match[2] });
           }
         } else if (node.nodeType === Node.ELEMENT_NODE) {
