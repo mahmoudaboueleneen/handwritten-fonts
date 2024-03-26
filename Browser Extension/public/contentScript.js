@@ -61,9 +61,9 @@ const observer = new MutationObserver((mutations) => {
           const messageRegex = /(.*)##\|\|tag:HandwrittenFontsExt<1\.0\.0>\|\|uuid:([a-f0-9-]{36})\|\|##/;
           const match = node.textContent.match(messageRegex);
           if (match) {
-            console.log("Message detected:", match[0]);
+            console.log("Message detected:", match[1]);
             node.parentElement.setAttribute("data-uuid", match[2]);
-            chrome.runtime.sendMessage({ type: "DETECTED_MESSAGE", message: match[0], uuid: match[2] });
+            chrome.runtime.sendMessage({ type: "DETECTED_MESSAGE", message: match[1], uuid: match[2] });
           }
         } else if (node.nodeType === Node.ELEMENT_NODE) {
           node.childNodes.forEach(checkNodeAndDescendants);
