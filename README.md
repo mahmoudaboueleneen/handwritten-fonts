@@ -2,7 +2,7 @@
 
 ## Table of Contents
 
-## Architectural Overview
+## System Design
 
 **Design Goals**
 
