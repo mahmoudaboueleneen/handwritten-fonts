@@ -4,7 +4,7 @@
 
 ## System Design
 
-**Design Goals**
+### Design Goals
 
 Due to the nature of the project in dealing with font files corresponding to real individuals' handwriting, which is considered sensitive user data, the security requirements of the developed system dictated the design goals and choices.
 
@@ -20,13 +20,13 @@ What remained was a tool to be developed to provide the users with a web-based i
 
 Thus, the design goals were to implement a security-first system with font generation on the user's local machine, store the font files on a decentralized file system, utilize smart contracts on the blockchain as an immutable, verifiable backend, and develop a browser extension acting as an interface to allow users to upload font files, send and read messages in handwritten fonts.
 
-**Features**
+### Features
 
 The developed system offered four main features: generating font files in users' handwriting, uploading generated font files, sending messages to a particular recipient in one of the user's uploaded handwritten fonts, and viewing received messages in the intended handwritten font file.
 
 Other features include a contacts feature to allow users to easily message frequent contacts, and an export data and recover data feature to allow users to export their font files and data related to the extension to later recover their accounts if necessary.
 
-**Implementation**
+### Implementation
 
 A standalone desktop application was developed to handle font file generation locally on the user's machine. The user is prompted to print out a template laid out with spaces for the twenty-six lowercase letters of the English alphabet. Then the user proceeds to fill out the space for each letter with his handwritten version of the letter, before proceeding on to scan the template and upload it into the application. Then the user begins cropping a part of the image corresponding to each of the twenty-six letters, and then he clicks submit, and the application proceeds to generate a TrueType font file (TTF file) in the user's handwriting.
 
