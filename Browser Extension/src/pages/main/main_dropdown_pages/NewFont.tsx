@@ -186,9 +186,8 @@ const NewFont = () => {
       <dialog ref={modalRef} className="modal">
         <div className="modal-box">
           <h3 className="text-lg font-bold mb-7">Enter your password to continue</h3>
-
           {modalErrorMessage && <span className="my-5 text-center text-error">{modalErrorMessage}</span>}
-
+          // TODO: Accept ttf only
           <input
             type="password"
             className="w-full input input-bordered join-item"
