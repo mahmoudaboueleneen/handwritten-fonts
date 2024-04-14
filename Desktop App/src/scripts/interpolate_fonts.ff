@@ -5,4 +5,4 @@ Open("Begok.ttf")
 InterpolateFonts(30, "QuirkyRobot.ttf")
 
 # Save the new font
-Generate("Interpolateddd.ttf")
+Generate("../../output_fonts/Interpolateddd.ttf")
