@@ -1,0 +1,8 @@
+# Open the first font
+Open("Begok.ttf")
+
+# Interpolate with the second font
+InterpolateFonts(30, "QuirkyRobot.ttf")
+
+# Save the new font
+Generate("Interpolateddd.ttf")

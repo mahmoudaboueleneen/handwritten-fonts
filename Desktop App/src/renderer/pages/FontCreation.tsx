@@ -116,10 +116,6 @@ const FontCreation = () => {
   const handleLetterSelection = (
     event: React.MouseEvent<HTMLAnchorElement>,
   ) => {
-    console.log('weeee');
-    console.log('cropper', cropper);
-    console.log('dropdownElement', dropdownElement.current);
-    console.log('dropdownContentElement', dropdownContentElement.current);
     if (
       !cropperRef.current ||
       !dropdownElement.current ||
@@ -127,8 +123,6 @@ const FontCreation = () => {
     ) {
       return;
     }
-
-    console.log('Letter selected');
 
     const cropBoxData = cropperRef.current.getCropBoxData();
     const letter = event.currentTarget.innerText;
@@ -161,7 +155,7 @@ const FontCreation = () => {
       return;
     }
 
-    console.log(filePath);
+    console.log('FILEPATH: ', filePath);
 
     let fontData =
       Object.values(characters)
