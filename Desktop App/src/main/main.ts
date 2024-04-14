@@ -30,7 +30,7 @@ ipcMain.on('run-java', (_event, arg) => {
   let javaCmd = 'java';
   let javaArgs = [
     '-jar',
-    '../java_app/target/handwritten-fonts-1.0-SNAPSHOT-jar-with-dependencies.jar',
+    '../java/target/handwritten-fonts-1.0-SNAPSHOT-jar-with-dependencies.jar',
     ...arg,
   ];
 

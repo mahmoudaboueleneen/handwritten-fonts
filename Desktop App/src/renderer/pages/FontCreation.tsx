@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import 'cropperjs/dist/cropper.css';
 import Cropper from 'cropperjs';
+import 'cropperjs/dist/cropper.css';
 import templateImg from 'assets/template.png';
 
 const FontCreation = () => {
@@ -35,7 +35,6 @@ const FontCreation = () => {
 
   const [downloadedTemplate, setDownloadedTemplate] = useState<boolean>(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  let cropper: Cropper | null = null;
 
   const imageElement = useRef<HTMLImageElement | null>(null);
   const containerElement = useRef<HTMLDivElement | null>(null);
