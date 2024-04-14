@@ -97,11 +97,13 @@ npm start
 **Desktop App:**
 
 - Electron
-- HTML
-- CSS
-- JavaScript
+- React
+- TypeScript
 - Cropper.js
-- Bootstrap
+- Tailwind
+- DaisyUI
+- Java
+- Fontastic
 
 **Browser Extension:**
 
