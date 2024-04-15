@@ -53,6 +53,9 @@ npm start
 - Tailwind
 - DaisyUI
 - Web3.js
+- NFT.Storage
+- JSEncrypt
+- Crypto-JS
 
 ## Tests
 

@@ -10,11 +10,12 @@
  */
 import path from 'path';
 import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
+import { spawn } from 'child_process';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import { spawn } from 'child_process';
 
 class AppUpdater {
   constructor() {
@@ -30,7 +31,7 @@ ipcMain.on('run-java', (_event, arg) => {
   let javaCmd = 'java';
   let javaArgs = [
     '-jar',
-    '../java/target/handwritten-fonts-1.0-SNAPSHOT-jar-with-dependencies.jar',
+    'src/java/target/handwritten-fonts-1.0-SNAPSHOT-jar-with-dependencies.jar',
     ...arg,
   ];
 
@@ -38,6 +39,7 @@ ipcMain.on('run-java', (_event, arg) => {
 
   javaProcess.stdout.on('data', (data) => {
     console.log(`stdout: ${data}`);
+    _event.sender.send('java-output', data.toString());
   });
 
   javaProcess.stderr.on('data', (data) => {
@@ -46,6 +48,28 @@ ipcMain.on('run-java', (_event, arg) => {
 
   javaProcess.on('close', (code) => {
     console.log(`Java process exited with code ${code}`);
+  });
+});
+
+ipcMain.on('run-fontforge', (_event, _arg) => {
+  const fontForgePath = path.join(__dirname, 'src/lib/fontforge.exe');
+
+  const scriptPath = path.join(__dirname, 'src/scripts/interpolate_fonts.ff');
+
+  const command = `"${fontForgePath}" -script "${scriptPath}"`;
+
+  const fontForgeProcess = spawn(command, { shell: true });
+
+  fontForgeProcess.stdout.on('data', (data) => {
+    console.log(`stdout: ${data}`);
+  });
+
+  fontForgeProcess.stderr.on('data', (data) => {
+    console.error(`stderr: ${data}`);
+  });
+
+  fontForgeProcess.on('close', (code) => {
+    console.log(`FontForge process exited with code ${code}`);
   });
 });
 
@@ -118,6 +142,7 @@ const createWindow = async () => {
 
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
+  menuBuilder.hideMenu();
 
   // Open urls in the user's browser
   mainWindow.webContents.setWindowOpenHandler((edata) => {
@@ -129,10 +154,6 @@ const createWindow = async () => {
   // eslint-disable-next-line
   new AppUpdater();
 };
-
-/**
- * Add event listeners...
- */
 
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even

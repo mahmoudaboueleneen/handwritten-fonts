@@ -37,6 +37,10 @@ export default class MenuBuilder {
     return menu;
   }
 
+  hideMenu(): void {
+    Menu.setApplicationMenu(null);
+  }
+
   setupDevelopmentEnvironment(): void {
     this.mainWindow.webContents.on('context-menu', (_, props) => {
       const { x, y } = props;

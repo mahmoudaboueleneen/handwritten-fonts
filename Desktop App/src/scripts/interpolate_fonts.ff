@@ -1,3 +1,12 @@
+# This is a FontForge script that interpolates two fonts to generate a new font.
+# It takes three arguments:
+# $1: The path to the first font file.
+# $2: The path to the second font file.
+# $3: The path where the output font file should be saved.
+
+# For more details on FontForge scripting, refer to the official FontForge scripting documentation.
+# https://fontforge.org/docs/scripting/scripting.html
+
 # Open the first font
 Open("Begok.ttf")
 

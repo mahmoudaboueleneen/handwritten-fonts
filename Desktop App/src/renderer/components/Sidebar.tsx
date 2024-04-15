@@ -4,7 +4,7 @@ const Sidebar = () => {
   const navigate = useNavigate();
 
   return (
-    <ul className="h-screen menu bg-base-200">
+    <ul className="h-screen drop-shadow-2xl menu bg-secondary">
       <li>
         <button
           className="tooltip tooltip-right"
@@ -16,7 +16,7 @@ const Sidebar = () => {
             className="w-5 h-5"
             fill="none"
             viewBox="0 0 24 24"
-            stroke="currentColor"
+            stroke="white"
           >
             <path
               strokeLinecap="round"

@@ -1,4 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
+import { IpcRendererEvent } from 'electron';
+import { useNavigate } from 'react-router-dom';
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
 import templateImg from 'assets/template.png';
@@ -32,9 +34,16 @@ const FontCreation = () => {
     y: null,
     z: null,
   });
-
   const [downloadedTemplate, setDownloadedTemplate] = useState<boolean>(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedImagePath, setSelectedImagePath] = useState<string | null>(
+    null,
+  );
+  const [generatedFontFilePath, setGeneratedFontFilePath] = useState<
+    string | null
+  >(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const imageElement = useRef<HTMLImageElement | null>(null);
   const containerElement = useRef<HTMLDivElement | null>(null);
@@ -59,7 +68,8 @@ const FontCreation = () => {
       cropperRef.current = new Cropper(imageElement.current, {
         zoomable: false,
         rotatable: false,
-        autoCropArea: 0.1,
+        autoCropArea: 0.05,
+        aspectRatio: 1,
         ready: function () {
           console.log('Cropper initialized');
         },
@@ -73,6 +83,33 @@ const FontCreation = () => {
     };
   }, [selectedImage]);
 
+  useEffect(() => {
+    const handleJavaOutput = (event: IpcRendererEvent, data: string) => {
+      console.log('EVENT', event);
+      console.log('DATA', data);
+      if (
+        event &&
+        event.toString().includes('TTF file created successfully:')
+      ) {
+        const path = event.toString().split(': ')[1];
+        setGeneratedFontFilePath(path);
+        console.log('Font file path:', path);
+
+        setLoading(false);
+        navigate('/font-interpolation');
+      }
+    };
+
+    const removeListener = window.electron.ipcRenderer.on(
+      'java-output',
+      handleJavaOutput,
+    );
+
+    return () => {
+      removeListener();
+    };
+  }, []);
+
   const downloadTemplate = () => {
     const link = document.createElement('a');
     link.href = templateImg;
@@ -85,8 +122,10 @@ const FontCreation = () => {
     if (!event.target.files) {
       return;
     }
-
-    setSelectedImage(URL.createObjectURL(event.target.files[0]));
+    const file = event.target.files[0];
+    setSelectedImage(URL.createObjectURL(file));
+    const filePath = file.path;
+    setSelectedImagePath(filePath);
   };
 
   const handleCrop = (cropper: Cropper) => {
@@ -142,19 +181,24 @@ const FontCreation = () => {
     console.log(characters);
   }, [characters]);
 
-  const generateFont = () => {
+  const generateHandwrittenFont = () => {
+    setLoading(true);
+
     /**
      * Convert the items array to the desired string format for the Java program
      * Format: "letter,x,y,w,h/letter,x,y,w,h/letter,x,y,w,h/"
      * e.g. "a,10,20,30,40/b,50,60,70,80/"
      */
-    const filePath = selectedImage;
+
+    if (!selectedImage) {
+      return;
+    }
+
+    const filePath = selectedImagePath;
 
     if (!filePath) {
       return;
     }
-
-    console.log('FILEPATH: ', filePath);
 
     let fontData =
       Object.values(characters)
@@ -186,6 +230,29 @@ const FontCreation = () => {
             className="w-full max-w-xs file-input file-input-bordered"
           />
         </label>
+      </div>
+    );
+
+  if (generatedFontFilePath)
+    return (
+      <div className="flex flex-col items-center justify-center h-full">
+        <div role="alert" className="alert alert-success">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-6 h-6 stroke-current shrink-0"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <span>Your font file has been generated!</span>
+        </div>
+        {generatedFontFilePath}
       </div>
     );
 
@@ -229,8 +296,12 @@ const FontCreation = () => {
         </div>
       )}
 
-      <button className="btn btn-lg btn-primary" onClick={generateFont}>
-        Generate Font
+      <button
+        className="btn btn-lg btn-primary"
+        onClick={generateHandwrittenFont}
+        disabled={loading}
+      >
+        {loading ? 'Generating Font...' : 'Generate Font'}
       </button>
     </div>
   );
