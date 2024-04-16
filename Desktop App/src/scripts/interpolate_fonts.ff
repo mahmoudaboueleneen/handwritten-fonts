@@ -8,10 +8,10 @@
 # https://fontforge.org/docs/scripting/scripting.html
 
 # Open the first font
-Open("Begok.ttf")
+Open($1)
 
 # Interpolate with the second font
-InterpolateFonts(30, "QuirkyRobot.ttf")
+InterpolateFonts(30, $2)
 
 # Save the new font
-Generate("../../output_fonts/Interpolateddd.ttf")
+Generate($3)

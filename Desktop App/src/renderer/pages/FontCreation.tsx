@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
 import templateImg from 'assets/template.png';
+import { useGeneratedFontFilePath } from '../hooks/useGeneratedFontFilePath';
 
 const FontCreation = () => {
   const [characters, setCharacters] = useState<Record<string, string | null>>({
@@ -39,11 +40,9 @@ const FontCreation = () => {
   const [selectedImagePath, setSelectedImagePath] = useState<string | null>(
     null,
   );
-  const [generatedFontFilePath, setGeneratedFontFilePath] = useState<
-    string | null
-  >(null);
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
+  const { setGeneratedFontFilePath } = useGeneratedFontFilePath();
 
   const imageElement = useRef<HTMLImageElement | null>(null);
   const containerElement = useRef<HTMLDivElement | null>(null);
@@ -230,29 +229,6 @@ const FontCreation = () => {
             className="w-full max-w-xs file-input file-input-bordered"
           />
         </label>
-      </div>
-    );
-
-  if (generatedFontFilePath)
-    return (
-      <div className="flex flex-col items-center justify-center h-full">
-        <div role="alert" className="alert alert-success">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-6 h-6 stroke-current shrink-0"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          <span>Your font file has been generated!</span>
-        </div>
-        {generatedFontFilePath}
       </div>
     );
 

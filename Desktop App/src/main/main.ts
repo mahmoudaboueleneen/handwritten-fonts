@@ -51,14 +51,13 @@ ipcMain.on('run-java', (_event, arg) => {
   });
 });
 
-ipcMain.on('run-fontforge', (_event, _arg) => {
-  const fontForgePath = path.join(__dirname, 'src/lib/fontforge.exe');
-
-  const scriptPath = path.join(__dirname, 'src/scripts/interpolate_fonts.ff');
-
-  const command = `"${fontForgePath}" -script "${scriptPath}"`;
+ipcMain.on('run-fontforge', (_event, arg) => {
+  const fontForgePath = 'assets/lib/FontForge/bin/fontforge.exe';
+  const scriptPath = 'src/scripts/interpolate_fonts.ff';
+  const command = `"${fontForgePath}" -script "${scriptPath}" "${arg[0]}" "${arg[1]}" "${arg[2]}"`;
 
   const fontForgeProcess = spawn(command, { shell: true });
+  console.log('Running FontForge with command:', command);
 
   fontForgeProcess.stdout.on('data', (data) => {
     console.log(`stdout: ${data}`);
@@ -71,6 +70,22 @@ ipcMain.on('run-fontforge', (_event, _arg) => {
   fontForgeProcess.on('close', (code) => {
     console.log(`FontForge process exited with code ${code}`);
   });
+});
+
+ipcMain.on('open-file-dialog', (event, path) => {
+  dialog
+    .showOpenDialog({
+      defaultPath: path,
+      properties: ['openDirectory'],
+    })
+    .then((result) => {
+      if (!result.canceled) {
+        event.sender.send('selected-directory', result.filePaths);
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 });
 
 if (process.env.NODE_ENV === 'production') {
