@@ -2,7 +2,7 @@
 
 Create handwritten fonts from your own handwriting and send messages via any messaging platform in your handwriting.
 
-This project includes a Desktop Application for font generation, and a Chrome Extension for sending and displaying messages in handwritten fonts.
+This project includes a Desktop Application for font generation, and a Chrome Extension for sending and displaying messages in handwritten fonts, and leverages fully decentralized technologies (IPFS and Ethereum Blockchain) for all storage and processing logic, and its own encryption system for security.
 
 ## Usage (For Users)
 
