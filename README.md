@@ -1,36 +1,43 @@
 # Handwritten Fonts
 
-![Architectural Overview](./docs/Diagrams/architectural-overview.svg)
+Create handwritten fonts from your own handwriting and send messages via any messaging platform in your handwriting.
 
-## Getting Started
+This project includes a Desktop Application for font generation, and a Chrome Extension for sending and displaying messages in handwritten fonts.
 
-Move into the desktop application's backend directory.
+## Usage (For Users)
 
-```bash
-cd "Desktop App/backend"
-```
+## Usage (For Developers)
 
-Add dependencies to the local Maven Repository. (These dependencies aren't present on the Maven Central Repository so they were downloaded manually, added to the lib folder of the project, then they must be added to the local Maven Repository)
+### Desktop App
 
-```bash
-mvn install:install-file -Dfile='lib/doubletype.jar' -DgroupId='com.example' -DartifactId='doubletype' -Dversion='1.0' -Dpackaging=jar
-mvn install:install-file -Dfile='lib/geomerative.jar' -DgroupId='com.example' -DartifactId='geomerative' -Dversion='1.0' -Dpackaging=jar
-mvn install:install-file -Dfile='lib/sfntly.jar' -DgroupId='com.example' -DartifactId='sfntly' -Dversion='1.0' -Dpackaging=jar
-mvn install:install-file -Dfile='lib/sfnttool.jar' -DgroupId='com.example' -DartifactId='sfnttool' -Dversion='1.0' -Dpackaging=jar
-mvn install:install-file -Dfile='lib/catalina.jar' -DgroupId='org.apache.tomcat' -DartifactId='tomcat-catalina' -Dversion='1.0' -Dpackaging=jar
-```
+1.  Install Maven
+1.  Move into the desktop application's backend directory.
+    ```bash
+    cd "Desktop App/backend"
+    ```
+1.  Add dependencies to the local Maven Repository. (These dependencies aren't present on the Maven Central Repository so they were downloaded manually, added to the lib folder of the project, then they must be added to the local Maven Repository)
 
-Build the Java App into one JAR file including all dependencies
+    ```bash
+    mvn install:install-file -Dfile='lib/doubletype.jar' -DgroupId='com.example' -DartifactId='doubletype' -Dversion='1.0' -Dpackaging=jar
+    mvn install:install-file -Dfile='lib/geomerative.jar' -DgroupId='com.example' -DartifactId='geomerative' -Dversion='1.0' -Dpackaging=jar
+    mvn install:install-file -Dfile='lib/sfntly.jar' -DgroupId='com.example' -DartifactId='sfntly' -Dversion='1.0' -Dpackaging=jar
+    mvn install:install-file -Dfile='lib/sfnttool.jar' -DgroupId='com.example' -DartifactId='sfnttool' -Dversion='1.0' -Dpackaging=jar
+    mvn install:install-file -Dfile='lib/catalina.jar' -DgroupId='org.apache.tomcat' -DartifactId='tomcat-catalina' -Dversion='1.0' -Dpackaging=jar
+    ```
 
-```bash
-mvn clean install
-```
+1.  Build the Java App into one JAR file including all dependencies
 
-Start the Electron App
+    ```bash
+    mvn clean install
+    ```
 
-```bash
-npm start
-```
+1.  Start the Electron App
+
+    ```bash
+    npm start
+    ```
+
+### Browser Extension
 
 ## Tech Stack
 
@@ -59,7 +66,13 @@ npm start
 
 ## Tests
 
+Unit tests were developed for the Ethereum Smart Contract using Mocha, Ganache and Web3.js.
+
+![Ethereum Unit Tests](docs/Images/test.png)
+
 ## Author
+
+[@mahmoudaboueleneen](https://github.com/mahmoudaboueleneen)
 
 ## Credits
 
