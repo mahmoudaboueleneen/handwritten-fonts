@@ -49,12 +49,14 @@ This project includes a Desktop Application for font generation, and a Chrome Ex
 
 - Electron
 - React
+- Electron-React Boilerplate Template
 - TypeScript
 - Cropper.js
 - Tailwind
 - DaisyUI
 - Java
 - Fontastic
+- FontForge
 
 **Browser Extension:**
 
