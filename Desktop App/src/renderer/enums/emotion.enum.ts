@@ -1,9 +1,8 @@
 export enum Emotion {
-  NEUTRAL = 'neutral',
-
-  FEAR = 'fear',
-  ANGER = 'anger',
-  HAPPINESS = 'happiness',
-  SADNESS = 'sadness',
-  SURPRISE = 'surprise',
+  NEUTRAL = 'Neutral',
+  FEAR = 'Fear',
+  ANGER = 'Anger',
+  HAPPINESS = 'Happiness',
+  SADNESS = 'Sadness',
+  SURPRISE = 'Surprise',
 }

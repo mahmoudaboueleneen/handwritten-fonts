@@ -31,6 +31,10 @@ This project includes a Desktop Application for font generation, and a Chrome Ex
     mvn clean install
     ```
 
+1.  Download and Install FontForge
+
+1.  Add the fontforge executable/binary file to your system's path
+
 1.  Start the Electron App
 
     ```bash

@@ -1,19 +1,52 @@
 import { useState, useEffect } from 'react';
 
 import { useGeneratedFontFilePath } from '../hooks/useGeneratedFontFilePath';
+import { Emotion } from '../enums/emotion.enum';
+import { IpcRendererEvent } from 'electron';
 
 const FontInterpolation = () => {
+  const [showToast, setShowToast] = useState<boolean>(false);
+  const [toastMessage, setToastMessage] = useState<string>('');
   const { generatedFontFilePath } = useGeneratedFontFilePath();
 
-  const generateFontVariants = () => {
+  const generateFontVariant = (emotion: Emotion) => {
     const args = [
       generatedFontFilePath,
-      'assets/fonts/Begok.ttf',
-      'assets/output_fonts/my_interpolated_font.ttf',
+      `assets/fonts/${emotion}.ttf`,
+      emotion,
     ];
 
     window.electron.ipcRenderer.runFontForge(args);
   };
+
+  useEffect(() => {
+    const handleFontForgeOutput = (event: IpcRendererEvent, _data: string) => {
+      if (event) {
+        const newInterpolatedFontPath = event;
+        setToastMessage(`New font generated at: ${newInterpolatedFontPath}`);
+        setShowToast(true);
+
+        // Hide the toast after 2 seconds
+        const timeoutId = setTimeout(() => {
+          setShowToast(false);
+        }, 2000);
+
+        return () => {
+          clearTimeout(timeoutId);
+        };
+      }
+    };
+
+    const removeListener = window.electron.ipcRenderer.on(
+      'fontforge-output',
+      handleFontForgeOutput,
+    );
+
+    return () => {
+      removeListener();
+      setShowToast(false);
+    };
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center h-full">
@@ -41,9 +74,25 @@ const FontInterpolation = () => {
 
       <h2>Available variants of your font:</h2>
 
-      <button className="btn btn-primary" onClick={generateFontVariants}>
-        Generate Variants
-      </button>
+      <div className="flex space-x-4">
+        {Object.values(Emotion).map((emotion) => (
+          <button
+            key={emotion}
+            className="btn btn-primary"
+            onClick={() => generateFontVariant(emotion)}
+          >
+            {emotion}
+          </button>
+        ))}
+      </div>
+
+      {showToast && (
+        <div className="toast toast-end">
+          <div className="alert alert-success">
+            <span>{toastMessage}</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -16,6 +16,7 @@ import log from 'electron-log';
 
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import { homedir } from 'os';
 
 class AppUpdater {
   constructor() {
@@ -52,9 +53,17 @@ ipcMain.on('run-java', (_event, arg) => {
 });
 
 ipcMain.on('run-fontforge', (_event, arg) => {
-  const fontForgePath = 'assets/lib/FontForge/bin/fontforge.exe';
   const scriptPath = 'src/scripts/interpolate_fonts.ff';
-  const command = `"${fontForgePath}" -script "${scriptPath}" "${arg[0]}" "${arg[1]}" "${arg[2]}"`;
+
+  arg = arg.map((a: string) => a.trim()); // Remove leading/trailing whitespace or newlines
+
+  const handwrittenFontPath = arg[0];
+  const referenceFontPath = arg[1];
+  const emotion = arg[2];
+
+  const outputFontPath = homedir() + `MyHandwrittenFonts/${emotion}.ttf`;
+
+  const command = `fontforge -script "${scriptPath}" "${handwrittenFontPath}" "${referenceFontPath}" "${outputFontPath}"`;
 
   const fontForgeProcess = spawn(command, { shell: true });
   console.log('Running FontForge with command:', command);
@@ -65,6 +74,7 @@ ipcMain.on('run-fontforge', (_event, arg) => {
 
   fontForgeProcess.stderr.on('data', (data) => {
     console.error(`stderr: ${data}`);
+    _event.sender.send('fontforge-output', data.toString());
   });
 
   fontForgeProcess.on('close', (code) => {
