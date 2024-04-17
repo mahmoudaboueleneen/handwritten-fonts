@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import { useGeneratedFontFilePath } from '../hooks/useGeneratedFontFilePath';
-import { Emotion } from '../enums/emotion.enum';
+import { Emotion } from '../enums/Emotion.enum';
 import { IpcRendererEvent } from 'electron';
 
 const FontInterpolation = () => {
@@ -26,7 +26,6 @@ const FontInterpolation = () => {
         setToastMessage(`New font generated at: ${newInterpolatedFontPath}`);
         setShowToast(true);
 
-        // Hide the toast after 2 seconds
         const timeoutId = setTimeout(() => {
           setShowToast(false);
         }, 2000);
@@ -78,7 +77,7 @@ const FontInterpolation = () => {
         {Object.values(Emotion).map((emotion) => (
           <button
             key={emotion}
-            className="btn btn-primary"
+            className="w-32 btn btn-primary"
             onClick={() => generateFontVariant(emotion)}
           >
             {emotion}
@@ -89,7 +88,7 @@ const FontInterpolation = () => {
       {showToast && (
         <div className="toast toast-end">
           <div className="alert alert-success">
-            <span>{toastMessage}</span>
+            <span className="break-all">{toastMessage}</span>
           </div>
         </div>
       )}

@@ -68,9 +68,12 @@ const FontCreation = () => {
         zoomable: false,
         rotatable: false,
         autoCropArea: 0.05,
-        aspectRatio: 1,
         ready: function () {
           console.log('Cropper initialized');
+          const cropBox = document.querySelector('.cropper-crop-box');
+          if (cropBox) {
+            cropBox.classList.add('baseline-indicator', 'meanline-indicator');
+          }
         },
         crop: function () {
           if (!cropperRef.current) {
