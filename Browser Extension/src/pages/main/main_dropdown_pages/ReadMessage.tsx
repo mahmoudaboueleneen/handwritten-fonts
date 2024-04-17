@@ -5,10 +5,10 @@ import { DetectedMessage } from "../../../types/DetectedMessage.interface";
 import { useAuth } from "../../../hooks/useAuth";
 import { decryptFileSymmetric, decryptMessageSymmetric } from "../../../utils/cryptography/SymmetricEncryption";
 import { SymmetricDecryptionError } from "../../../utils/errors/SymmetricDecryptionError";
-import useEthereum from "../../../hooks/useEthereum";
 import { hashMessage } from "../../../utils/cryptography/Hashing";
 import { decryptMessageAsymmetric } from "../../../utils/cryptography/AsymmetricEncryption";
 import { fetchFromIPFS } from "../../../services/FetchFromIPFS";
+import useEthereum from "../../../hooks/useEthereum";
 
 const ReadMessage = () => {
   const { detectedMessages } = useDetectedMessages();
@@ -22,6 +22,30 @@ const ReadMessage = () => {
   const modalRef = useRef<HTMLDialogElement>(null);
   const { selectedAccount } = useAuth();
   const ethereum = useEthereum();
+
+  const checkCurrentNodesForMessages = () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      if (tabs[0].id !== undefined) {
+        chrome.scripting.executeScript({
+          target: { tabId: tabs[0].id },
+          func: function () {
+            const messageRegex = /(.*)##\|\|tag:HandwrittenFontsExt<1\.0\.0>\|\|uuid:([a-f0-9-]{36})\|\|##/;
+            const elements = document.querySelectorAll("[data-original-content]");
+            elements.forEach((element) => {
+              const originalContent = element.getAttribute("data-original-content");
+              if (!originalContent) return;
+              const match = originalContent.match(messageRegex);
+              if (match) {
+                console.log("Message detected with [data-original-content] attribute:", originalContent);
+                console.log("Message detected with match[1]:", match[1]);
+                chrome.runtime.sendMessage({ type: "DETECTED_MESSAGE", message: match[1], uuid: match[2] });
+              }
+            });
+          }
+        });
+      }
+    });
+  };
 
   const openModal = () => {
     if (modalRef.current) {
@@ -180,17 +204,22 @@ const ReadMessage = () => {
       </div>
     );
 
+  if (privateKeyNotFound)
+    return (
+      <div>
+        Private Key not found, please upload a backup or, as a last resort, generate new public and private keys.
+      </div>
+    );
+
   return (
-    <div className="h-full px-10">
+    <div className="h-full px-10 pt-5">
       <h1 className="text-2xl font-bold text-center">Read Messages</h1>
 
-      {errorMessage && <span className="mt-3 text-error">{errorMessage}</span>}
+      <button onClick={checkCurrentNodesForMessages} className="my-5 btn btn-primary">
+        Manually Check for messages on current webpage
+      </button>
 
-      {privateKeyNotFound && (
-        <div>
-          Private Key not found, please upload a backup or, as a last resort, generate new public and private keys.
-        </div>
-      )}
+      {errorMessage && <span className="mt-3 text-error">{errorMessage}</span>}
 
       {detectedMessages.map((detectedMessage, index) => (
         <div key={index}>

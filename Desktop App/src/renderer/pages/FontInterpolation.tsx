@@ -48,7 +48,7 @@ const FontInterpolation = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center h-full">
+    <div className="flex flex-col items-center justify-center h-full space-y-5">
       <h1 className="text-3xl">Success!</h1>
 
       <div role="alert" className="alert alert-success max-w-96">
@@ -71,7 +71,7 @@ const FontInterpolation = () => {
         </span>
       </div>
 
-      <h2>Available variants of your font:</h2>
+      <h2>You can now generate variants of your font for each emotion.</h2>
 
       <div className="flex space-x-4">
         {Object.values(Emotion).map((emotion) => (

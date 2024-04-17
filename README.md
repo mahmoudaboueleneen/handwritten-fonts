@@ -31,10 +31,7 @@ This project includes a Desktop Application for font generation, and a Chrome Ex
     mvn clean install
     ```
 
-1.  Download and Install FontForge
-
-    > [!NOTE]  
-    > **_IMPORTANT_**: Ensure the FontForge executable/binary file to your system's PATH environment variable
+1.  Download and Install FontForge (**_IMPORTANT_**: Ensure the FontForge executable/binary file to your system's PATH environment variable)
 
 1.  Start the Electron App
 

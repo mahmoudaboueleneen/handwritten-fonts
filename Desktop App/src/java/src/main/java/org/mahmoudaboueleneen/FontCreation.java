@@ -30,7 +30,7 @@ public class FontCreation extends PApplet {
 		// Set author name - will be saved in TTF file too
 		font.setAuthor("Mahmoud Abou Eleneen");
 		font.getEngine().setBaseline(0.5);
-		font.getEngine().setXHeight(0.75);
+		font.getEngine().setMeanline(0.75);
 
 		PVector[] points = {};
 		if (Data.length != 0) {
