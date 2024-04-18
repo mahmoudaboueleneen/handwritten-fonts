@@ -41,6 +41,8 @@ const FontCreation = () => {
     null,
   );
   const [loading, setLoading] = useState<boolean>(false);
+  const [scaleFactorWidth, setScaleFactorWidth] = useState<number>(1);
+  const [scaleFactorHeight, setScaleFactorHeight] = useState<number>(1);
   const navigate = useNavigate();
   const { setGeneratedFontFilePath } = useGeneratedFontFilePath();
 
@@ -61,8 +63,43 @@ const FontCreation = () => {
         return;
       }
 
-      containerElement.current.style.width = `${imageElement.current.naturalWidth}px`;
-      containerElement.current.style.height = `${imageElement.current.naturalHeight}px`;
+      // Calculate the aspect ratio of the image
+      const aspectRatio =
+        imageElement.current.naturalWidth / imageElement.current.naturalHeight;
+
+      // Determine the maximum size for the image
+      const maxWidth = 1000;
+      const maxHeight = 800;
+
+      let width, height;
+
+      // Adjust the width and height based on the aspect ratio
+      if (aspectRatio > 1) {
+        // If the image is wider than it is tall
+        width =
+          imageElement.current.naturalWidth > maxWidth
+            ? maxWidth
+            : imageElement.current.naturalWidth;
+        height = width / aspectRatio;
+      } else {
+        // If the image is taller than it is wide
+        height =
+          imageElement.current.naturalHeight > maxHeight
+            ? maxHeight
+            : imageElement.current.naturalHeight;
+        width = height * aspectRatio;
+      }
+
+      // Set the size of the image and the container
+      imageElement.current.style.width = `${width}px`;
+      imageElement.current.style.height = `${height}px`;
+      containerElement.current.style.width = `${width}px`;
+      containerElement.current.style.height = `${height}px`;
+
+      // Calculate the scale factor for the image based on the original size and the displayed size
+      // so that the coordinates of the crop box can be converted to coordinates based on the original image size
+      setScaleFactorWidth(imageElement.current.naturalWidth / width);
+      setScaleFactorHeight(imageElement.current.naturalHeight / height);
 
       cropperRef.current = new Cropper(imageElement.current, {
         zoomable: false,
@@ -74,6 +111,12 @@ const FontCreation = () => {
           if (cropBox) {
             cropBox.classList.add('baseline-indicator', 'meanline-indicator');
           }
+        },
+        cropmove: function () {
+          if (!cropperRef.current) {
+            return;
+          }
+          console.log(cropperRef.current.getCropBoxData());
         },
         crop: function () {
           if (!cropperRef.current) {
@@ -166,9 +209,13 @@ const FontCreation = () => {
 
     const cropBoxData = cropperRef.current.getCropBoxData();
     const letter = event.currentTarget.innerText;
-    const dataString = `${letter},${Math.round(cropBoxData.left)},${Math.round(
-      cropBoxData.top,
-    )},${Math.round(cropBoxData.width)},${Math.round(cropBoxData.height)}`;
+
+    // Adjust the coordinates using the scale factors
+    const dataString = `${letter},${Math.round(
+      cropBoxData.left * scaleFactorWidth,
+    )},${Math.round(cropBoxData.top * scaleFactorHeight)},${Math.round(
+      cropBoxData.width * scaleFactorWidth,
+    )},${Math.round(cropBoxData.height * scaleFactorHeight)}`;
 
     setCharacters((prevState) => ({
       ...prevState,

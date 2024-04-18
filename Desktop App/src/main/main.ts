@@ -61,7 +61,11 @@ ipcMain.on('run-fontforge', (_event, arg) => {
   const referenceFontPath = arg[1];
   const emotion = arg[2];
 
-  const outputFontPath = homedir() + `MyHandwrittenFonts/${emotion}.ttf`;
+  const outputFontPath = path.join(
+    homedir(),
+    'MyHandwrittenFonts',
+    `${emotion}.ttf`,
+  );
 
   const command = `fontforge -script "${scriptPath}" "${handwrittenFontPath}" "${referenceFontPath}" "${outputFontPath}"`;
 

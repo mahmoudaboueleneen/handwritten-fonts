@@ -55,27 +55,30 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
 const observer = new MutationObserver((mutations) => {
   mutations.forEach((mutation) => {
     mutation.addedNodes.forEach((node) => {
-      // Recursively check all descendants of the added node
-      const checkNodeAndDescendants = (node) => {
-        if (node.nodeType === Node.TEXT_NODE) {
-          const messageRegex = /(.*)##\|\|tag:HandwrittenFontsExt<1\.0\.0>\|\|uuid:([a-f0-9-]{36})\|\|##/;
-          const match = node.textContent.match(messageRegex);
-          if (match) {
-            console.log("Message detected:", match[1]);
-            let parentElement = node.parentElement;
-            parentElement.setAttribute("data-uuid", match[2]);
-            parentElement.setAttribute("data-original-content", node.textContent);
-            parentElement.textContent = match[1];
-            chrome.runtime.sendMessage({ type: "DETECTED_MESSAGE", message: match[1], uuid: match[2] });
-          }
-        } else if (node.nodeType === Node.ELEMENT_NODE) {
-          node.childNodes.forEach(checkNodeAndDescendants);
-        }
-      };
-
       checkNodeAndDescendants(node);
     });
   });
 });
 
+const checkNodeAndDescendants = (node) => {
+  if (node.nodeType === Node.TEXT_NODE) {
+    const messageRegex = /(.*)##\|\|tag:HandwrittenFontsExt<1\.0\.0>\|\|uuid:([a-f0-9-]{36})\|\|##/;
+    const match = node.textContent.match(messageRegex);
+    if (match) {
+      console.log("Message detected:", match[1]);
+      let parentElement = node.parentElement;
+      parentElement.setAttribute("data-uuid", match[2]);
+      parentElement.setAttribute("data-original-content", node.textContent);
+      parentElement.textContent = match[1];
+      chrome.runtime.sendMessage({ type: "DETECTED_MESSAGE", message: match[1], uuid: match[2] });
+    }
+  } else if (node.nodeType === Node.ELEMENT_NODE) {
+    node.childNodes.forEach(checkNodeAndDescendants);
+  }
+};
+
+// Check all existing nodes when the page loads
+checkNodeAndDescendants(document.body);
+
+// Then start the MutationObserver to detect changes
 observer.observe(document.body, { childList: true, subtree: true });

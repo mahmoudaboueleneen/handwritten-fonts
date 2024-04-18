@@ -7,6 +7,10 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+    box-sizing: border-box;
+}
+
 .baseline-indicator::after {
     content: "";
     position: absolute;
@@ -14,8 +18,7 @@
     right: 0;
     bottom: 50%;
     border-top: 1px solid red;
-    z-index: 1; /* make the red line stack on top */
-
+    z-index: 1;
 }
 
 .meanline-indicator::before {
@@ -25,8 +28,5 @@
     right: 0;
     bottom: 75%;
     border-top: 1px solid blue;
-    z-index: 2; /* make the blue line stack above the red line */
-
+    z-index: 2;
 }
-
-/*  */
