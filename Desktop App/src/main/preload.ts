@@ -22,6 +22,9 @@ const electronHandler = {
     openFileDialog: (path: string) => {
       ipcRenderer.send('open-file-dialog', path);
     },
+    processImage: async (imagePath: string) => {
+      return await ipcRenderer.invoke('process-image', imagePath);
+    },
   },
 };
 

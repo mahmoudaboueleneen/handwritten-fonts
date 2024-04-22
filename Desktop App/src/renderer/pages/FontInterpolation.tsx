@@ -12,7 +12,7 @@ const FontInterpolation = () => {
   const generateFontVariant = (emotion: Emotion) => {
     const args = [
       generatedFontFilePath,
-      `assets/fonts/${emotion}.ttf`,
+      `assets/reference_fonts/${emotion}.ttf`,
       emotion,
     ];
 

@@ -9,6 +9,11 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
+import fs from 'fs';
+import svgtofont from 'svgtofont';
+import Tesseract from 'tesseract.js';
+import sharp from 'sharp';
+import potrace from 'potrace';
 import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
 import { spawn } from 'child_process';
 import { autoUpdater } from 'electron-updater';
@@ -100,6 +105,75 @@ ipcMain.on('open-file-dialog', (event, path) => {
     .catch((err) => {
       console.log(err);
     });
+});
+
+ipcMain.handle('process-image', async (_event, imagePath) => {
+  // Preprocess the image
+  const preprocessedImagePath = './temp/preprocessed/preprocessed.png';
+  await sharp(imagePath)
+    .grayscale() // Convert image to grayscale
+    .threshold(128) // Apply a threshold (binarization). All pixels with a value above 128 will be white, and all others will be black.
+    .toFile(preprocessedImagePath);
+
+  // Use Tesseract to recognize text from preprocessed image
+  const result = await Tesseract.recognize(preprocessedImagePath, 'eng', {
+    logger: (m) => console.log(m),
+  });
+
+  // Process the result
+  const characterData: Record<string, any> = {};
+  result.data.words.forEach((word) => {
+    word.symbols.forEach((symbol) => {
+      if (/[a-z]/i.test(symbol.text)) {
+        // Only process alphabetic characters
+        characterData[symbol.text.toLowerCase()] = symbol.bbox; // Store the bounding box data for each character
+      }
+    });
+  });
+
+  console.log('Character data:', characterData);
+
+  // Create SVGs for each character
+  await Promise.all(
+    Object.entries(characterData).map(async ([char, bbox]) => {
+      // Load the image with Sharp
+      const image = sharp(imagePath);
+
+      // Crop the image to the bounding box of the character
+      const croppedImageBuffer = await image
+        .extract({
+          left: bbox.x0,
+          top: bbox.y0,
+          width: bbox.x1 - bbox.x0,
+          height: bbox.y1 - bbox.y0,
+        })
+        .png()
+        .toBuffer();
+
+      potrace.trace(croppedImageBuffer, (error, svg) => {
+        if (error) {
+          console.error('Error tracing image:', error);
+          return;
+        }
+
+        fs.writeFileSync(`./temp/svgs/${char}.svg`, svg);
+      });
+    }),
+  );
+
+  svgtofont({
+    src: path.resolve(process.cwd(), 'temp/svgs'),
+    dist: path.resolve(process.cwd(), 'temp/generated'),
+    fontName: 'MyFont',
+    css: false,
+    startUnicode: 0x61, // start character mapping at 'a'
+    svgicons2svgfont: {
+      fontHeight: 1000,
+      // normalize: true,
+    },
+  }).then(() => {
+    console.log('done!');
+  });
 });
 
 if (process.env.NODE_ENV === 'production') {
