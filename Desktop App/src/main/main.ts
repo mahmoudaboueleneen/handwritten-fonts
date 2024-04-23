@@ -12,10 +12,12 @@ import path from 'path';
 import fs from 'fs-extra';
 import svgtofont from 'svgtofont';
 import Jimp from 'jimp';
+import { DOMParser, XMLSerializer } from 'xmldom';
 import { parseSVG } from 'svg-path-parser';
 import svgPathBounds from 'svg-path-bounds';
 import { createWorker } from 'tesseract.js';
 import { PSM } from 'tesseract.js';
+import svg2ttf from 'svg2ttf';
 import sharp from 'sharp';
 import potrace from 'potrace';
 import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
@@ -234,6 +236,36 @@ ipcMain.handle('process-image', async (_event, imagePath) => {
         return;
       }
 
+      // Check if the character has a descender
+      if (['g', 'p', 'q', 'y', 'j'].includes(region.expectedChar)) {
+        // Parse the SVG content
+        const svgDoc = new DOMParser().parseFromString(
+          svgContent,
+          'image/svg+xml',
+        );
+        const svgElem = svgDoc.documentElement;
+
+        // Get the original viewBox
+        const originalViewBox = svgElem
+          .getAttribute('viewBox')!
+          .split(' ')
+          .map(Number);
+
+        // Adjust the viewBox to shift the character downwards
+        const adjustedViewBox = [
+          originalViewBox[0],
+          originalViewBox[1] - 20,
+          originalViewBox[2],
+          originalViewBox[3] + 20,
+        ];
+
+        // Update the viewBox attribute
+        svgElem.setAttribute('viewBox', adjustedViewBox.join(' '));
+
+        // Convert the SVG document back to a string
+        svgContent = new XMLSerializer().serializeToString(svgDoc);
+      }
+
       characterData[region.expectedChar] = svgContent;
     });
   }
@@ -243,8 +275,8 @@ ipcMain.handle('process-image', async (_event, imagePath) => {
   }
 
   svgtofont({
-    src: path.resolve(process.cwd(), 'temp/svgs'),
-    dist: path.resolve(process.cwd(), 'temp/generated'),
+    src: path.resolve(process.cwd(), 'temp', 'svgs'),
+    dist: path.resolve(process.cwd(), 'temp', 'generated'),
     fontName: 'MyFont',
     css: false,
     startUnicode: 0x61, // start character mapping at 'a'
@@ -253,7 +285,7 @@ ipcMain.handle('process-image', async (_event, imagePath) => {
       // normalize: true,
     },
   }).then(() => {
-    console.log('done!');
+    console.log('Done!');
   });
 });
 
