@@ -12,7 +12,7 @@ const App = () => {
       <Layout>
         <GeneratedFontFilePathProvider>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<FontCreation />} />
             <Route path="/font-creation" element={<FontCreation />} />
             <Route path="/font-interpolation" element={<FontInterpolation />} />
           </Routes>

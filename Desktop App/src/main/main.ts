@@ -9,9 +9,11 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import fs from 'fs';
+import fs from 'fs-extra';
 import svgtofont from 'svgtofont';
-import Tesseract from 'tesseract.js';
+import { optimize } from 'svgo';
+import { createWorker } from 'tesseract.js';
+import { PSM } from 'tesseract.js';
 import sharp from 'sharp';
 import potrace from 'potrace';
 import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
@@ -109,57 +111,130 @@ ipcMain.on('open-file-dialog', (event, path) => {
 
 ipcMain.handle('process-image', async (_event, imagePath) => {
   // Preprocess the image
-  const preprocessedImagePath = './temp/preprocessed/preprocessed.png';
-  await sharp(imagePath)
-    .grayscale() // Convert image to grayscale
-    .threshold(128) // Apply a threshold (binarization). All pixels with a value above 128 will be white, and all others will be black.
-    .toFile(preprocessedImagePath);
+  // const preprocessedImagePath = './temp/preprocessed/preprocessed.png';
+  // await sharp(imagePath).toFile(preprocessedImagePath);
+
+  const characterData: Record<string, any> = {};
+
+  /**
+   * A list of regions in the image where we expect to find characters.
+   * This assumes that the selected image has no space around the actual
+   * grid containing the characters. Any additional whitespace around the
+   * grid will make the coordinates of the regions incorrect.
+   */
+  const characterRegions = [
+    // Top row (big boxes)
+    { top: 30, left: 10, width: 60, height: 60, expectedChar: 'a' },
+    { top: 30, left: 80, width: 60, height: 60, expectedChar: 'b' },
+    { top: 30, left: 160, width: 60, height: 60, expectedChar: 'c' },
+    { top: 30, left: 230, width: 60, height: 60, expectedChar: 'd' },
+    { top: 30, left: 310, width: 60, height: 60, expectedChar: 'e' },
+    { top: 30, left: 390, width: 60, height: 60, expectedChar: 'f' },
+    { top: 30, left: 460, width: 60, height: 60, expectedChar: 'g' },
+    { top: 30, left: 540, width: 60, height: 60, expectedChar: 'h' },
+    { top: 30, left: 610, width: 60, height: 60, expectedChar: 'i' },
+    { top: 30, left: 690, width: 60, height: 60, expectedChar: 'j' },
+    { top: 30, left: 770, width: 60, height: 60, expectedChar: 'k' },
+
+    // Second row (big box)
+    { top: 130, left: 10, width: 60, height: 60, expectedChar: 'l' },
+    { top: 130, left: 80, width: 60, height: 60, expectedChar: 'm' },
+    { top: 130, left: 160, width: 60, height: 60, expectedChar: 'n' },
+    { top: 130, left: 230, width: 60, height: 60, expectedChar: 'o' },
+    { top: 130, left: 310, width: 60, height: 60, expectedChar: 'p' },
+    { top: 130, left: 390, width: 60, height: 60, expectedChar: 'q' },
+    { top: 130, left: 460, width: 60, height: 60, expectedChar: 'r' },
+    { top: 130, left: 540, width: 60, height: 60, expectedChar: 's' },
+    { top: 130, left: 610, width: 60, height: 60, expectedChar: 't' },
+    { top: 130, left: 690, width: 60, height: 60, expectedChar: 'u' },
+    { top: 130, left: 770, width: 60, height: 60, expectedChar: 'v' },
+
+    // Fourth row (big box)
+    { top: 230, left: 10, width: 60, height: 60, expectedChar: 'w' },
+    { top: 230, left: 80, width: 60, height: 60, expectedChar: 'x' },
+    { top: 230, left: 160, width: 60, height: 60, expectedChar: 'y' },
+    { top: 230, left: 230, width: 60, height: 60, expectedChar: 'z' },
+  ];
 
   // Use Tesseract to recognize text from preprocessed image
-  const result = await Tesseract.recognize(preprocessedImagePath, 'eng', {
-    logger: (m) => console.log(m),
-  });
+  // await (async () => {
+  //   const worker = await createWorker('eng', 1);
 
-  // Process the result
-  const characterData: Record<string, any> = {};
-  result.data.words.forEach((word) => {
-    word.symbols.forEach((symbol) => {
-      if (/[a-z]/i.test(symbol.text)) {
-        // Only process alphabetic characters
-        characterData[symbol.text.toLowerCase()] = symbol.bbox; // Store the bounding box data for each character
-      }
-    });
-  });
+  //   const processCharacter = (result: any) => {
+  //     result.data.words.forEach((word: any) => {
+  //       word.symbols.forEach((symbol: any) => {
+  //         if (/[a-z]/i.test(symbol.text)) {
+  //           // Only process alphabetic characters
+  //           characterData[symbol.text.toLowerCase()] = symbol.bbox; // Store the bounding box data for each character
+  //         }
+  //       });
+  //     });
+  //   };
+
+  //   await worker.setParameters({
+  //     tessedit_char_whitelist: 'abcdefghijklmnopqrstuvwxyz',
+  //   });
+
+  //   for (const region of characterRegions) {
+  //     await worker.setParameters({
+  //       tessedit_char_whitelist: region.expectedChar,
+  //       tessedit_pageseg_mode: PSM.SINGLE_CHAR,
+  //     });
+
+  //     const result = await worker.recognize(preprocessedImagePath, {
+  //       rectangle: region,
+  //     });
+
+  //     console.log('Recognized text:', result.data.text);
+
+  //     processCharacter(result);
+  //   }
+  // })();
 
   console.log('Character data:', characterData);
 
+  const svgsDirPath = path.resolve('temp', 'svgs');
+  fs.removeSync(svgsDirPath);
+  fs.ensureDirSync(svgsDirPath);
+
+  const generatedDirPath = path.resolve('temp', 'generated');
+  fs.removeSync(generatedDirPath);
+  fs.ensureDirSync(generatedDirPath);
+
+  // const preprocessedDirPath = path.resolve('temp', 'preprocessed');
+  // fs.removeSync(preprocessedDirPath);
+  // fs.ensureDirSync(preprocessedDirPath);
+
   // Create SVGs for each character
-  await Promise.all(
-    Object.entries(characterData).map(async ([char, bbox]) => {
-      // Load the image with Sharp
-      const image = sharp(imagePath);
+  for (const region of characterRegions) {
+    const croppedImageBuffer = await sharp(imagePath)
+      .extract({
+        left: region.left,
+        top: region.top,
+        width: region.width,
+        height: region.height,
+      })
+      .png()
+      .toBuffer();
 
-      // Crop the image to the bounding box of the character
-      const croppedImageBuffer = await image
-        .extract({
-          left: bbox.x0,
-          top: bbox.y0,
-          width: bbox.x1 - bbox.x0,
-          height: bbox.y1 - bbox.y0,
-        })
-        .png()
-        .toBuffer();
+    potrace.trace(croppedImageBuffer, (error, svg) => {
+      if (error) {
+        console.error('Error tracing image:', error);
+        return;
+      }
 
-      potrace.trace(croppedImageBuffer, (error, svg) => {
-        if (error) {
-          console.error('Error tracing image:', error);
-          return;
-        }
+      characterData[region.expectedChar] = svg;
+    });
+  }
 
-        fs.writeFileSync(`./temp/svgs/${char}.svg`, svg);
-      });
-    }),
-  );
+  for (const [char, svgContent] of Object.entries(characterData)) {
+    const result = optimize(svgContent, {
+      path: `${svgsDirPath}/${char}.svg`,
+      plugins: ['removeDimensions'],
+    });
+
+    fs.writeFileSync(`${svgsDirPath}/${char}.svg`, result.data);
+  }
 
   svgtofont({
     src: path.resolve(process.cwd(), 'temp/svgs'),

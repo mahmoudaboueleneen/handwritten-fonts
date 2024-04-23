@@ -65,5 +65,8 @@ npm-debug.log.*
 ### Environment ###
 .env
 
-# Dependency directory
+### Dependency directory ###
 node_modules
+
+### Temp directory ###
+temp
