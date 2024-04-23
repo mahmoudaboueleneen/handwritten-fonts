@@ -18,7 +18,8 @@ const electronHandler = {
       ipcRenderer.once(channel, (_event, ...args) => func(...args));
     },
     runJava: (args: string[]) => ipcRenderer.send('run-java', args),
-    runFontForge: (args: string[]) => ipcRenderer.send('run-fontforge', args),
+    runFontForge: (args: (string | number)[]) =>
+      ipcRenderer.send('run-fontforge', args),
     openFileDialog: (path: string) => {
       ipcRenderer.send('open-file-dialog', path);
     },

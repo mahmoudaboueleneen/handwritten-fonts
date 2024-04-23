@@ -66,11 +66,10 @@ ipcMain.on('run-java', (_event, arg) => {
 ipcMain.on('run-fontforge', (_event, arg) => {
   const scriptPath = 'src/scripts/interpolate_fonts.ff';
 
-  arg = arg.map((a: string) => a.trim()); // Remove leading/trailing whitespace or newlines
-
   const handwrittenFontPath = arg[0];
   const referenceFontPath = arg[1];
   const emotion = arg[2];
+  const interpolationPercentage = arg[3];
 
   const outputFontPath = path.join(
     homedir(),
@@ -78,7 +77,7 @@ ipcMain.on('run-fontforge', (_event, arg) => {
     `${emotion}.ttf`,
   );
 
-  const command = `fontforge -script "${scriptPath}" "${handwrittenFontPath}" "${referenceFontPath}" "${outputFontPath}"`;
+  const command = `fontforge -script "${scriptPath}" "${handwrittenFontPath}" "${referenceFontPath}" "${outputFontPath}" "${interpolationPercentage}"`;
 
   const fontForgeProcess = spawn(command, { shell: true });
   console.log('Running FontForge with command:', command);

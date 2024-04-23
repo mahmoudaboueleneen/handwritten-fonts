@@ -3,6 +3,7 @@
 # $1: The path to the handwritten font file.
 # $2: The path to the reference font file.
 # $3: The path where the output interpolated font file should be saved.
+# $4: The percentage of the handwritten font file to take in the interpolation process.
 
 # For more details on FontForge scripting, refer to the official FontForge scripting documentation.
 # https://fontforge.org/docs/scripting/scripting.html
@@ -11,7 +12,7 @@
 Open($2)
 
 # Interpolate with the handwritten font using a certain percentage of the handwritten font
-InterpolateFonts(80, $1)
+InterpolateFonts(55, $1)
 
 # Save the new font
 Generate($3)
