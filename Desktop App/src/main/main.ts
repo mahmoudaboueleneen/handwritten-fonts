@@ -11,7 +11,9 @@
 import path from 'path';
 import fs from 'fs-extra';
 import svgtofont from 'svgtofont';
-import { optimize } from 'svgo';
+import Jimp from 'jimp';
+import { parseSVG } from 'svg-path-parser';
+import svgPathBounds from 'svg-path-bounds';
 import { createWorker } from 'tesseract.js';
 import { PSM } from 'tesseract.js';
 import sharp from 'sharp';
@@ -217,23 +219,27 @@ ipcMain.handle('process-image', async (_event, imagePath) => {
       .png()
       .toBuffer();
 
-    potrace.trace(croppedImageBuffer, (error, svg) => {
+    // Load the image with Jimp
+    const image = await Jimp.read(croppedImageBuffer);
+
+    // Autocrop the image
+    image.autocrop();
+
+    // Get the buffer of the cropped image
+    const croppedBuffer = await image.getBufferAsync(Jimp.MIME_PNG);
+
+    potrace.trace(croppedBuffer, (error, svgContent) => {
       if (error) {
         console.error('Error tracing image:', error);
         return;
       }
 
-      characterData[region.expectedChar] = svg;
+      characterData[region.expectedChar] = svgContent;
     });
   }
 
   for (const [char, svgContent] of Object.entries(characterData)) {
-    const result = optimize(svgContent, {
-      path: `${svgsDirPath}/${char}.svg`,
-      plugins: ['removeDimensions'],
-    });
-
-    fs.writeFileSync(`${svgsDirPath}/${char}.svg`, result.data);
+    fs.writeFileSync(`${svgsDirPath}/${char}.svg`, svgContent);
   }
 
   svgtofont({
