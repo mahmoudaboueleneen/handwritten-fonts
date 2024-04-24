@@ -71,6 +71,7 @@
     "electron-updater": "^6.1.4",
     "fabric": "^5.3.0",
     "flubber": "^0.4.2",
+    "fontello": "^0.5.0",
     "fs": "^0.0.1-security",
     "fs-extra": "^11.2.0",
     "jimp": "^0.22.12",

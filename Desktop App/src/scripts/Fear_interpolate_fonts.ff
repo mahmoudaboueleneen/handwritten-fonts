@@ -1,0 +1,20 @@
+# This is a FontForge script that interpolates two fonts to generate a new font.
+# It takes three arguments:
+# $1: The path to the handwritten font file.
+# $2: The path to the reference font file.
+# $3: The path where the output interpolated font file should be saved.
+
+# For more details on FontForge scripting, refer to the official FontForge scripting documentation.
+# https://fontforge.org/docs/scripting/scripting.html
+
+# Open the reference font
+Open($2)
+
+# Interpolate with the handwritten font using a certain percentage of the handwritten font
+InterpolateFonts(80, $1)
+
+# Save the new font
+Generate($3)
+
+# Print the path of the new saved font so the desktop app can be alerted and display a message to the user
+Print($3)

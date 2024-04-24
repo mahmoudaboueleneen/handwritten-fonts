@@ -14,6 +14,7 @@ const FontInterpolation = () => {
   const [surpriseClicked, setSurpriseClicked] = useState<boolean>(false);
   const [neutralClicked, setNeutralClicked] = useState<boolean>(false);
   const { generatedFontFilePath } = useGeneratedFontFilePath();
+
   const emotionToInterpolationPercentage = {
     [Emotion.ANGER]: 60,
     [Emotion.FEAR]: 40,
@@ -28,7 +29,7 @@ const FontInterpolation = () => {
       `temp/generated/MyFont.ttf`,
       `assets/reference_fonts/${emotion}.ttf`,
       emotion,
-      emotionToInterpolationPercentage[emotion],
+      // emotionToInterpolationPercentage[emotion],
     ];
 
     window.electron.ipcRenderer.runFontForge(args);

@@ -28,6 +28,7 @@ import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import { homedir } from 'os';
+import { Emotion } from '../renderer/enums/Emotion.enum';
 
 class AppUpdater {
   constructor() {
@@ -64,12 +65,14 @@ ipcMain.on('run-java', (_event, arg) => {
 });
 
 ipcMain.on('run-fontforge', (_event, arg) => {
-  const scriptPath = 'src/scripts/interpolate_fonts.ff';
-
   const handwrittenFontPath = arg[0];
   const referenceFontPath = arg[1];
   const emotion = arg[2];
-  const interpolationPercentage = arg[3];
+
+  // Different scripts were created for each emotion due to problems
+  // with passing the interpolation percentage to the script as an argument,
+  // which needs to be different for each emotion.
+  const scriptPath = `src/scripts/${emotion}_interpolate_fonts.ff`;
 
   const outputFontPath = path.join(
     homedir(),
@@ -77,7 +80,12 @@ ipcMain.on('run-fontforge', (_event, arg) => {
     `${emotion}.ttf`,
   );
 
-  const command = `fontforge -script "${scriptPath}" "${handwrittenFontPath}" "${referenceFontPath}" "${outputFontPath}" "${interpolationPercentage}"`;
+  if (emotion === Emotion.NEUTRAL) {
+    fs.copySync(handwrittenFontPath, outputFontPath);
+    return;
+  }
+
+  const command = `fontforge -script "${scriptPath}" "${handwrittenFontPath}" "${referenceFontPath}" "${outputFontPath}"`;
 
   const fontForgeProcess = spawn(command, { shell: true });
   console.log('Running FontForge with command:', command);
