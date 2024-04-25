@@ -51,7 +51,15 @@ const FontCreation = () => {
         setLoadingMessage('');
       }
     };
-    window.electron.ipcRenderer.on('java-output', handleJavaOutput);
+
+    const removeListener = window.electron.ipcRenderer.on(
+      'java-output',
+      handleJavaOutput,
+    );
+
+    return () => {
+      removeListener();
+    };
   }, []);
 
   if (!downloadedTemplate)

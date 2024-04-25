@@ -44,6 +44,12 @@ public class FGlyph {
 	private char glyphChar;
 	private List<FContour> contours;
 	private int advanceWidth = 512;
+	/**
+	 * @author Mahmoud Abou Eleneen
+	 * @note These two variable are NOT originally part of the FGlyph class. They
+	 *       are used to store the descender characters and the descender height
+	 *       value.
+	 */
 	private static final List<Character> DESCENDERS = Arrays.asList('g', 'j', 'p', 'q', 'y');
 	private static final float descenderHeight = 150;
 

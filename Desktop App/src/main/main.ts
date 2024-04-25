@@ -21,6 +21,10 @@ import { homedir } from 'os';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import { Emotion } from '../renderer/enums/Emotion.enum';
+import {
+  TEMPLATE_IMAGE_HEIGHT,
+  TEMPLATE_IMAGE_WIDTH,
+} from '../constants/TemplateImageDimensions';
 
 class AppUpdater {
   constructor() {
@@ -60,11 +64,11 @@ ipcMain.on('run-fontforge', (_event, arg) => {
 
   fontForgeProcess.stdout.on('data', (data) => {
     console.log(`stdout: ${data}`);
+    _event.sender.send('fontforge-output', data.toString());
   });
 
   fontForgeProcess.stderr.on('data', (data) => {
     console.error(`stderr: ${data}`);
-    _event.sender.send('fontforge-output', data.toString());
   });
 
   fontForgeProcess.on('close', (code) => {
@@ -73,6 +77,31 @@ ipcMain.on('run-fontforge', (_event, arg) => {
 });
 
 ipcMain.handle('process-image', async (_event, imagePath) => {
+  const svgsDirPath = path.resolve('temp', 'svgs');
+  fs.removeSync(svgsDirPath);
+  fs.ensureDirSync(svgsDirPath);
+
+  const generatedDirPath = path.resolve('temp', 'generated');
+  fs.removeSync(generatedDirPath);
+  fs.ensureDirSync(generatedDirPath);
+
+  const imageMetadata = await sharp(imagePath).metadata();
+
+  if (
+    imageMetadata.width !== TEMPLATE_IMAGE_WIDTH ||
+    imageMetadata.height !== TEMPLATE_IMAGE_HEIGHT
+  ) {
+    const resizedImagePath = path.resolve(
+      'temp',
+      'generated',
+      'resizedImage.png',
+    );
+    await sharp(imagePath)
+      .resize(TEMPLATE_IMAGE_WIDTH, TEMPLATE_IMAGE_HEIGHT)
+      .toFile(resizedImagePath);
+    imagePath = resizedImagePath;
+  }
+
   /**
    * A list of regions in the image where we expect to find characters.
    * This assumes that the selected image has no space around the actual
@@ -112,14 +141,6 @@ ipcMain.handle('process-image', async (_event, imagePath) => {
     { top: 230, left: 160, width: 60, height: 60, expectedChar: 'y' },
     { top: 230, left: 230, width: 60, height: 60, expectedChar: 'z' },
   ];
-
-  const svgsDirPath = path.resolve('temp', 'svgs');
-  fs.removeSync(svgsDirPath);
-  fs.ensureDirSync(svgsDirPath);
-
-  const generatedDirPath = path.resolve('temp', 'generated');
-  fs.removeSync(generatedDirPath);
-  fs.ensureDirSync(generatedDirPath);
 
   let xOffset = 0;
   let fontasticData = '';

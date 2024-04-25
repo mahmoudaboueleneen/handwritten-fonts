@@ -38,6 +38,9 @@ public class ImageEditor {
 
 				if (image.getColorModel().getPixelSize() == 32) {
 					RGBholder = new int[w * h * 4];
+					System.out.println("Image width: " + image.getWidth());
+					System.out.println("Image height: " + image.getHeight());
+
 					image.getRaster().getPixels(x1, y1, w, h, RGBholder);
 
 					for (int j = 0; j < RGBholder.length; j += 4) {

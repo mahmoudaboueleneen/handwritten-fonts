@@ -36,9 +36,13 @@ const FontInterpolation = () => {
   };
 
   useEffect(() => {
-    const handleFontForgeOutput = (event: IpcRendererEvent, _data: string) => {
-      if (event) {
-        const newInterpolatedFontPath = event;
+    const handleFontForgeOutput = (event: string, message: string) => {
+      if (event.includes('Interpolated font file generated: ')) {
+        console.log(event);
+
+        const newInterpolatedFontPath = event.split(
+          'Interpolated font file generated: ',
+        )[1];
         setToastMessage(`New font generated at: ${newInterpolatedFontPath}`);
         setShowToast(true);
 

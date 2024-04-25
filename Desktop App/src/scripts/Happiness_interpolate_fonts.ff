@@ -17,4 +17,4 @@ InterpolateFonts(55, $1)
 Generate($3)
 
 # Print the path of the new saved font so the desktop app can be alerted and display a message to the user
-Print($3)
+Print("Interpolated font file generated: " + $3)
