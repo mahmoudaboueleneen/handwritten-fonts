@@ -92,7 +92,7 @@ ipcMain.handle('process-image', async (_event, imagePath) => {
     .greyscale() // Convert to grayscale to minimize color saturation
     .normalize() // Maximize contrast
     .flatten({ background: { r: 255, g: 255, b: 255 } }) // Make the background white
-    .threshold(220) // Binarize the image
+    .threshold(240) // Binarize the image
     .toFile(adjustedImagePath);
   imagePath = adjustedImagePath;
 
@@ -121,36 +121,36 @@ ipcMain.handle('process-image', async (_event, imagePath) => {
    */
   const characterRegions = [
     // Top row (big cells)
-    { top: 30, left: 10, width: 60, height: 60, expectedChar: 'a' },
-    { top: 30, left: 80, width: 60, height: 60, expectedChar: 'b' },
-    { top: 30, left: 160, width: 60, height: 60, expectedChar: 'c' },
-    { top: 30, left: 230, width: 60, height: 60, expectedChar: 'd' },
-    { top: 30, left: 310, width: 60, height: 60, expectedChar: 'e' },
-    { top: 30, left: 390, width: 60, height: 60, expectedChar: 'f' },
-    { top: 30, left: 460, width: 60, height: 60, expectedChar: 'g' },
-    { top: 30, left: 540, width: 60, height: 60, expectedChar: 'h' },
-    { top: 30, left: 610, width: 60, height: 60, expectedChar: 'i' },
-    { top: 30, left: 690, width: 60, height: 60, expectedChar: 'j' },
-    { top: 30, left: 770, width: 60, height: 60, expectedChar: 'k' },
+    { top: 35, left: 10, width: 60, height: 60, expectedChar: 'a' },
+    { top: 35, left: 80, width: 60, height: 60, expectedChar: 'b' },
+    { top: 35, left: 160, width: 60, height: 60, expectedChar: 'c' },
+    { top: 35, left: 230, width: 60, height: 60, expectedChar: 'd' },
+    { top: 35, left: 310, width: 60, height: 60, expectedChar: 'e' },
+    { top: 35, left: 390, width: 60, height: 60, expectedChar: 'f' },
+    { top: 35, left: 460, width: 60, height: 60, expectedChar: 'g' },
+    { top: 35, left: 540, width: 60, height: 60, expectedChar: 'h' },
+    { top: 35, left: 610, width: 60, height: 60, expectedChar: 'i' },
+    { top: 35, left: 690, width: 60, height: 60, expectedChar: 'j' },
+    { top: 35, left: 770, width: 60, height: 60, expectedChar: 'k' },
 
     // Second row (big cells)
-    { top: 130, left: 10, width: 60, height: 60, expectedChar: 'l' },
-    { top: 130, left: 80, width: 60, height: 60, expectedChar: 'm' },
-    { top: 130, left: 160, width: 60, height: 60, expectedChar: 'n' },
-    { top: 130, left: 230, width: 60, height: 60, expectedChar: 'o' },
-    { top: 130, left: 310, width: 60, height: 60, expectedChar: 'p' },
-    { top: 130, left: 390, width: 60, height: 60, expectedChar: 'q' },
-    { top: 130, left: 460, width: 60, height: 60, expectedChar: 'r' },
-    { top: 130, left: 540, width: 60, height: 60, expectedChar: 's' },
-    { top: 130, left: 610, width: 60, height: 60, expectedChar: 't' },
-    { top: 130, left: 690, width: 60, height: 60, expectedChar: 'u' },
-    { top: 130, left: 770, width: 60, height: 60, expectedChar: 'v' },
+    { top: 135, left: 10, width: 60, height: 60, expectedChar: 'l' },
+    { top: 135, left: 80, width: 60, height: 60, expectedChar: 'm' },
+    { top: 135, left: 160, width: 60, height: 60, expectedChar: 'n' },
+    { top: 135, left: 230, width: 60, height: 60, expectedChar: 'o' },
+    { top: 135, left: 310, width: 60, height: 60, expectedChar: 'p' },
+    { top: 135, left: 390, width: 60, height: 60, expectedChar: 'q' },
+    { top: 135, left: 460, width: 60, height: 60, expectedChar: 'r' },
+    { top: 135, left: 540, width: 60, height: 60, expectedChar: 's' },
+    { top: 135, left: 610, width: 60, height: 60, expectedChar: 't' },
+    { top: 135, left: 690, width: 60, height: 60, expectedChar: 'u' },
+    { top: 135, left: 770, width: 60, height: 60, expectedChar: 'v' },
 
     // Third row (big cells)
-    { top: 230, left: 10, width: 60, height: 60, expectedChar: 'w' },
-    { top: 230, left: 80, width: 60, height: 60, expectedChar: 'x' },
-    { top: 230, left: 160, width: 60, height: 60, expectedChar: 'y' },
-    { top: 230, left: 230, width: 60, height: 60, expectedChar: 'z' },
+    { top: 235, left: 10, width: 60, height: 60, expectedChar: 'w' },
+    { top: 235, left: 80, width: 60, height: 60, expectedChar: 'x' },
+    { top: 235, left: 160, width: 60, height: 60, expectedChar: 'y' },
+    { top: 235, left: 230, width: 60, height: 60, expectedChar: 'z' },
   ];
 
   let xOffset = 0;
@@ -271,6 +271,7 @@ const createWindow = async () => {
   mainWindow = new BrowserWindow({
     show: false,
     icon: getAssetPath('icon.png'),
+    minWidth: 1024,
     webPreferences: {
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
