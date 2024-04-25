@@ -3,6 +3,10 @@ import { useState, useEffect } from 'react';
 import templateImg from 'assets/template.png';
 import { useNavigate } from 'react-router-dom';
 import { useGeneratedFontFilePath } from '../hooks/useGeneratedFontFilePath';
+import {
+  TEMPLATE_IMAGE_HEIGHT,
+  TEMPLATE_IMAGE_WIDTH,
+} from '../../constants/TemplateImageDimensions';
 
 const FontCreation = () => {
   const [downloadedTemplate, setDownloadedTemplate] = useState<boolean>(false);
@@ -112,8 +116,42 @@ const FontCreation = () => {
     );
 
   return (
-    <div className="flex flex-col items-center justify-center h-full">
-      <label className="w-full max-w-xs form-control">
+    <div className="flex flex-col items-center justify-center h-full space-y-10">
+      <div role="alert" className="shadow-lg alert w-[60%]">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          className="w-6 h-6 stroke-info shrink-0"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          ></path>
+        </svg>
+        <div className="space-y-2">
+          <h1 className="mb-1 text-lg font-bold">Image format</h1>
+          <p>
+            Please fill in the template and then scan it with a scanner or a
+            scanning app like PhotoScan.
+          </p>
+          <p>
+            Make sure the image is in PNG format and is cropped to the edges of
+            the template, as close as possible to the original template image.
+          </p>
+          <p>
+            Ideal dimensions:{' '}
+            <span className="text-lg font-medium text-neutral-600">
+              {TEMPLATE_IMAGE_WIDTH}x{TEMPLATE_IMAGE_HEIGHT}
+            </span>{' '}
+            pixels
+          </p>
+        </div>
+      </div>
+
+      <label className="w-full max-w-xs drop-shadow-lg form-control">
         <input
           type="file"
           accept="image/*"

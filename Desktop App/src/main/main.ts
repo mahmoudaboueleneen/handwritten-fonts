@@ -78,10 +78,6 @@ ipcMain.on('run-fontforge', (_event, arg) => {
 });
 
 ipcMain.handle('process-image', async (_event, imagePath) => {
-  const svgsDirPath = path.resolve('temp', 'svgs');
-  fs.removeSync(svgsDirPath);
-  fs.ensureDirSync(svgsDirPath);
-
   const generatedDirPath = path.resolve('temp', 'generated');
   fs.removeSync(generatedDirPath);
   fs.ensureDirSync(generatedDirPath);
@@ -145,7 +141,8 @@ ipcMain.handle('process-image', async (_event, imagePath) => {
 
   let xOffset = 0;
   let fontasticData = '';
-  let newImage = new Jimp(1500, 400, 0xffffffff);
+  // TODO: Find a better way to define the image width and height
+  let newImage = new Jimp(2000, 400, 0xffffffff); // Create a big enough new empty image with white background to add the cropped characters to
 
   for (const region of characterRegions) {
     const croppedImageBuffer = await sharp(imagePath)
