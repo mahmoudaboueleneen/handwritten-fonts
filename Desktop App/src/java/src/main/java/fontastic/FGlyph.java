@@ -4,6 +4,7 @@ import processing.core.PVector;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 
 /**
  * Fontastic
@@ -43,6 +44,8 @@ public class FGlyph {
 	private char glyphChar;
 	private List<FContour> contours;
 	private int advanceWidth = 512;
+	private static final List<Character> DESCENDERS = Arrays.asList('g', 'j', 'p', 'q', 'y');
+	private static final float descenderHeight = 150;
 
 	FGlyph(char c) {
 		glyphChar = c;
@@ -81,6 +84,13 @@ public class FGlyph {
 		return advanceWidth;
 	}
 
+	/**
+	 * @author Mahmoud Abou Eleneen
+	 * @note This method is NOT originally part of the FGlyph class. It has been
+	 *       added to calculate the actual advance width of the glyph.It was added
+	 *       due to problems with using the same advance width for all glyphs, as it
+	 *       created a lot of space between them.
+	 */
 	public int getActualAdvanceWidth() {
 		float minX = Float.MAX_VALUE;
 		float maxX = Float.MIN_VALUE;
@@ -97,6 +107,39 @@ public class FGlyph {
 		}
 
 		return (int) (maxX - minX);
+	}
+
+	/**
+	 * @author Mahmoud Abou Eleneen
+	 * @note This method is NOT originally part of the FGlyph class. It has been
+	 *       added to align the glyph to the baseline, so that all the glyphs start
+	 *       from the same vertical level, except for descenders which are lowered
+	 *       by a certain arbitrary descenderHeight value.
+	 */
+	public void alignToBaseline() {
+		float minY = Float.MAX_VALUE;
+
+		for (FContour contour : contours) {
+			for (FPoint point : contour.points) {
+				if (point.y < minY) {
+					minY = point.y;
+				}
+			}
+		}
+
+		for (FContour contour : contours) {
+			for (FPoint point : contour.points) {
+				point.y -= minY;
+			}
+		}
+
+		if (DESCENDERS.contains(glyphChar)) {
+			for (FContour contour : contours) {
+				for (FPoint point : contour.points) {
+					point.y -= descenderHeight;
+				}
+			}
+		}
 	}
 
 	public List<FContour> getContours() {

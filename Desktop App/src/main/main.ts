@@ -265,7 +265,6 @@ ipcMain.handle('process-image', async (_event, imagePath) => {
   }
 
   const newImagePath = path.resolve('temp', 'generated', 'newImage.png');
-  newImage.autocrop();
   newImage.write(newImagePath);
 
   let javaCmd = 'java';

@@ -170,7 +170,11 @@ public class Fontastic {
 
 			// NOTE: Commented out as it caused too much space between letters
 			// glyphFile.setAdvanceWidth(glyph.getAdvanceWidth());
+
+			// NOTE: The following two lines are custom code and not originally part of the
+			// Fontastic library
 			glyphFile.setAdvanceWidth(glyph.getActualAdvanceWidth());
+			glyph.alignToBaseline();
 
 			for (FContour contour : glyph.getContours()) {
 
