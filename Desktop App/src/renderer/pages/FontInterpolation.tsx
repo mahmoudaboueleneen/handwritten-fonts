@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 
 import { useGeneratedFontFilePath } from '../hooks/useGeneratedFontFilePath';
 import { Emotion } from '../enums/Emotion.enum';
-import { IpcRendererEvent } from 'electron';
 
 const FontInterpolation = () => {
   const [showToast, setShowToast] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string>('');
+  const [toastStatus, setToastStatus] = useState<string>('');
   const [angerClicked, setAngerClicked] = useState<boolean>(false);
   const [fearClicked, setFearClicked] = useState<boolean>(false);
   const [happinessClicked, setHappinessClicked] = useState<boolean>(false);
@@ -44,6 +44,7 @@ const FontInterpolation = () => {
           'Interpolated font file generated: ',
         )[1];
         setToastMessage(`New font generated at: ${newInterpolatedFontPath}`);
+        setToastStatus('success');
         setShowToast(true);
 
         const timeoutId = setTimeout(() => {
@@ -121,7 +122,7 @@ const FontInterpolation = () => {
 
       {showToast && (
         <div className="toast toast-end">
-          <div className="alert alert-success">
+          <div className={`alert alert-${toastStatus}`}>
             <span className="break-all">{toastMessage}</span>
           </div>
         </div>

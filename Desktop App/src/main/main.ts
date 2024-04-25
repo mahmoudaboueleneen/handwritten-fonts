@@ -69,6 +69,7 @@ ipcMain.on('run-fontforge', (_event, arg) => {
 
   fontForgeProcess.stderr.on('data', (data) => {
     console.error(`stderr: ${data}`);
+    _event.sender.send('fontforge-error', data.toString());
   });
 
   fontForgeProcess.on('close', (code) => {
@@ -194,6 +195,7 @@ ipcMain.handle('process-image', async (_event, imagePath) => {
 
   javaProcess.stderr.on('data', (data) => {
     console.error(`stderr: ${data}`);
+    _event.sender.send('java-error', data.toString());
   });
 
   javaProcess.on('close', (code) => {
