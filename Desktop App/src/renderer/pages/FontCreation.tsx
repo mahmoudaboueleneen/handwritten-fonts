@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import templateImg from 'assets/template.png';
 import { useNavigate } from 'react-router-dom';
@@ -32,15 +32,27 @@ const FontCreation = () => {
     setLoading(true);
     setLoadingMessage('Processing image...');
 
-    const generatedFontFilePath =
-      await window.electron.ipcRenderer.processImage(filePath);
-    setGeneratedFontFilePath(generatedFontFilePath);
-
-    navigate('/font-interpolation');
-
-    setLoading(false);
-    setLoadingMessage('');
+    window.electron.ipcRenderer.processImage(filePath);
   };
+
+  useEffect(() => {
+    const handleJavaOutput = (event: string, message: string) => {
+      if (event.includes('TTF file created successfully: ')) {
+        console.log(event);
+
+        setGeneratedFontFilePath(
+          event.split('TTF file created successfully: ')[1],
+        );
+        console.log(event.split('TTF file created successfully: ')[1]);
+
+        navigate('/font-interpolation');
+
+        setLoading(false);
+        setLoadingMessage('');
+      }
+    };
+    window.electron.ipcRenderer.on('java-output', handleJavaOutput);
+  }, []);
 
   if (!downloadedTemplate)
     return (

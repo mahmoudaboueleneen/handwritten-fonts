@@ -167,7 +167,10 @@ public class Fontastic {
 		for (FGlyph glyph : glyphs) {
 
 			GlyphFile glyphFile = m_engine.addNewGlyph(glyph.getGlyphChar());
-			glyphFile.setAdvanceWidth(glyph.getAdvanceWidth());
+
+			// NOTE: Commented out as it caused too much space between letters
+			// glyphFile.setAdvanceWidth(glyph.getAdvanceWidth());
+			glyphFile.setAdvanceWidth(glyph.getActualAdvanceWidth());
 
 			for (FContour contour : glyph.getContours()) {
 

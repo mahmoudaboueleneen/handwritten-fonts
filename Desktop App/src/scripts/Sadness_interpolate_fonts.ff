@@ -11,7 +11,7 @@
 Open($2)
 
 # Interpolate with the handwritten font using a certain percentage of the handwritten font
-InterpolateFonts(50, $1)
+InterpolateFonts(60, $1)
 
 # Save the new font
 Generate($3)

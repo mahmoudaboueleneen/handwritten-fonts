@@ -65,7 +65,7 @@ ipcMain.on('run-java', (_event, arg) => {
 });
 
 ipcMain.on('run-fontforge', (_event, arg) => {
-  const handwrittenFontPath = arg[0];
+  const handwrittenFontPath = arg[0].trim();
   const referenceFontPath = arg[1];
   const emotion = arg[2];
 
@@ -216,6 +216,12 @@ ipcMain.handle('process-image', async (_event, imagePath) => {
   // fs.removeSync(preprocessedDirPath);
   // fs.ensureDirSync(preprocessedDirPath);
 
+  const emptyTemplateImagePath = path.resolve('assets', 'template.png');
+
+  let xOffset = 0;
+  let fontasticData = '';
+  let newImage = new Jimp(1500, 400, 0xffffffff);
+
   // Create SVGs for each character
   for (const region of characterRegions) {
     const croppedImageBuffer = await sharp(imagePath)
@@ -231,69 +237,126 @@ ipcMain.handle('process-image', async (_event, imagePath) => {
     // Load the image with Jimp
     const image = await Jimp.read(croppedImageBuffer);
 
+    console.log('width before autocrop', image.bitmap.width);
+    console.log('height before autocrop', image.bitmap.height);
+
     // Autocrop the image
     image.autocrop();
 
+    console.log('width after autocrop', image.bitmap.width);
+    console.log('height after autocrop', image.bitmap.height);
+
+    // Add the cropped image to the new image at the current xOffset
+    newImage.composite(image, xOffset, 0);
+
     // Get the buffer of the cropped image
-    const croppedBuffer = await image.getBufferAsync(Jimp.MIME_PNG);
+    // const croppedBuffer = await image.getBufferAsync(Jimp.MIME_PNG);
 
-    potrace.trace(croppedBuffer, (error, svgContent) => {
-      if (error) {
-        console.error('Error tracing image:', error);
-        return;
-      }
+    // Save the cropped image to a file
+    const croppedImagePath = path.resolve(
+      generatedDirPath,
+      `${region.expectedChar}.png`,
+    );
+    image.write(croppedImagePath);
 
-      // Check if the character has a descender
-      if (['g', 'p', 'q', 'y', 'j'].includes(region.expectedChar)) {
-        // Parse the SVG content
-        const svgDoc = new DOMParser().parseFromString(
-          svgContent,
-          'image/svg+xml',
-        );
-        const svgElem = svgDoc.documentElement;
-
-        // Get the original viewBox
-        const originalViewBox = svgElem
-          .getAttribute('viewBox')!
-          .split(' ')
-          .map(Number);
-
-        // Adjust the viewBox to shift the character downwards
-        const adjustedViewBox = [
-          originalViewBox[0],
-          originalViewBox[1] - 20,
-          originalViewBox[2],
-          originalViewBox[3] + 20,
-        ];
-
-        // Update the viewBox attribute
-        svgElem.setAttribute('viewBox', adjustedViewBox.join(' '));
-
-        // Convert the SVG document back to a string
-        svgContent = new XMLSerializer().serializeToString(svgDoc);
-      }
-
-      characterData[region.expectedChar] = svgContent;
-    });
+    fontasticData += `${region.expectedChar},${xOffset},0,${image.bitmap.width},${image.bitmap.height}/`;
+    console.log('fontasticData:', fontasticData);
+    xOffset += image.bitmap.width; // Use the width of the autocropped image
   }
 
-  for (const [char, svgContent] of Object.entries(characterData)) {
-    fs.writeFileSync(`${svgsDirPath}/${char}.svg`, svgContent);
-  }
+  const newImagePath = path.resolve('temp', 'generated', 'newImage.png');
+  newImage.autocrop();
+  newImage.write(newImagePath);
 
-  svgtofont({
-    src: path.resolve(process.cwd(), 'temp', 'svgs'),
-    dist: path.resolve(process.cwd(), 'temp', 'generated'),
-    fontName: 'MyFont',
-    css: false,
-    startUnicode: 0x61, // start character mapping at 'a'
-    svgicons2svgfont: {
-      fontHeight: 1000,
-      // normalize: true,
-    },
-  }).then(() => {
-    console.log('Done!');
+  let javaCmd = 'java';
+  let javaArgs = [
+    '-jar',
+    'src/java/target/handwritten-fonts-1.0-SNAPSHOT-jar-with-dependencies.jar',
+    fontasticData,
+    newImagePath,
+  ];
+
+  let javaProcess = spawn(javaCmd, javaArgs);
+
+  javaProcess.stdout.on('data', (data) => {
+    console.log(`stdout: ${data}`);
+    _event.sender.send('java-output', data.toString());
   });
+
+  javaProcess.stderr.on('data', (data) => {
+    console.error(`stderr: ${data}`);
+  });
+
+  javaProcess.on('close', (code) => {
+    console.log(`Java process exited with code ${code}`);
+  });
+
+  //   potrace.trace(croppedBuffer, (error, svgContent) => {
+  //     if (error) {
+  //       console.error('Error tracing image:', error);
+  //       return;
+  //     }
+
+  //     // Add fill-rule="nonzero" to the path element if it doesn't exist
+  //     if (svgContent.includes('fill-rule="evenodd"')) {
+  //       svgContent = svgContent.replace('evenodd', 'nonzero');
+  //     }
+
+  //     if (svgContent.includes('fill="black"')) {
+  //       svgContent = svgContent.replace('black', 'white');
+  //     }
+
+  //     // Check if the character has a descender
+  //     if (['g', 'p', 'q', 'y', 'j'].includes(region.expectedChar)) {
+  //       // Parse the SVG content
+  //       const svgDoc = new DOMParser().parseFromString(
+  //         svgContent,
+  //         'image/svg+xml',
+  //       );
+  //       const svgElem = svgDoc.documentElement;
+
+  //       // Get the original viewBox
+  //       const originalViewBox = svgElem
+  //         .getAttribute('viewBox')!
+  //         .split(' ')
+  //         .map(Number);
+
+  //       // Adjust the viewBox to shift the character downwards
+  //       const adjustedViewBox = [
+  //         originalViewBox[0],
+  //         originalViewBox[1] - 20,
+  //         originalViewBox[2],
+  //         originalViewBox[3] + 20,
+  //       ];
+
+  //       // Update the viewBox attribute
+  //       svgElem.setAttribute('viewBox', adjustedViewBox.join(' '));
+
+  //       // Convert the SVG document back to a string
+  //       svgContent = new XMLSerializer().serializeToString(svgDoc);
+  //     }
+
+  //     characterData[region.expectedChar] = svgContent;
+  //   });
+  // }
+
+  // for (const [char, svgContent] of Object.entries(characterData)) {
+  //   fs.writeFileSync(`${svgsDirPath}/${char}.svg`, svgContent);
+  // }
+
+  // svgtofont({
+  //   src: path.resolve(process.cwd(), 'temp', 'svgs'),
+  //   dist: path.resolve(process.cwd(), 'temp', 'generated'),
+  //   fontName: 'MyFont',
+  //   css: false,
+  //   startUnicode: 0x61, // start character mapping at 'a'
+  //   svgicons2svgfont: {
+  //     fontHeight: 1000,
+  //     // normalize: true,
+  //   },
+  // }).then(() => {
+  //   console.log('Done!');
+  // });
 });
 
 if (process.env.NODE_ENV === 'production') {

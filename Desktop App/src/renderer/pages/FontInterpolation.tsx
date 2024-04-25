@@ -26,7 +26,7 @@ const FontInterpolation = () => {
 
   const generateFontVariant = (emotion: Emotion) => {
     const args = [
-      `temp/generated/MyFont.ttf`,
+      generatedFontFilePath,
       `assets/reference_fonts/${emotion}.ttf`,
       emotion,
       // emotionToInterpolationPercentage[emotion],
@@ -84,7 +84,6 @@ const FontInterpolation = () => {
         <span>
           We have successfully processed your font file. Now you can choose the
           flavors of your font that you want to generate.
-          <span className="break-all">{generatedFontFilePath}</span>
         </span>
       </div>
 

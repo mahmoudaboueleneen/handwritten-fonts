@@ -32,7 +32,6 @@ import java.util.List;
  * @version     0.3 (3)
  */
 
-
 /**
  * Class FGlyph
  * 
@@ -53,11 +52,11 @@ public class FGlyph {
 	public void addContour() {
 		contours.add(new FContour());
 	}
-	
+
 	public void addContour(PVector[] points) {
 		contours.add(new FContour(points));
 	}
-	
+
 	public void addContour(FPoint[] points) {
 		contours.add(new FContour(points));
 	}
@@ -65,7 +64,7 @@ public class FGlyph {
 	public void addContour(PVector[] points, PVector[] controlPoints1, PVector[] controlPoints2) {
 		contours.add(new FContour(points, controlPoints1, controlPoints2));
 	}
-	
+
 	public void addContour(FContour contour) {
 		contours.add(contour);
 	}
@@ -73,15 +72,33 @@ public class FGlyph {
 	public void setAdvanceWidth(int advanceWidth) {
 		this.advanceWidth = advanceWidth;
 	}
-	
+
 	public char getGlyphChar() {
 		return glyphChar;
 	}
-	
+
 	public int getAdvanceWidth() {
 		return advanceWidth;
 	}
-	
+
+	public int getActualAdvanceWidth() {
+		float minX = Float.MAX_VALUE;
+		float maxX = Float.MIN_VALUE;
+
+		for (FContour contour : contours) {
+			for (FPoint point : contour.points) {
+				if (point.x < minX) {
+					minX = point.x;
+				}
+				if (point.x > maxX) {
+					maxX = point.x;
+				}
+			}
+		}
+
+		return (int) (maxX - minX);
+	}
+
 	public List<FContour> getContours() {
 		return contours;
 	}
@@ -90,29 +107,29 @@ public class FGlyph {
 		FContour[] contoursArray = contours.toArray(new FContour[contours.size()]);
 		return contoursArray;
 	}
-	
+
 	public FContour getContour(int index) {
 		return contours.get(index);
 	}
-	
+
 	public int getContourCount() {
 		return contours.size();
 	}
-	
+
 	public void setContour(int index, PVector[] points) {
-		contours.set(index, new FContour(points));		
+		contours.set(index, new FContour(points));
 	}
 
 	public void setContour(int index, FPoint[] points) {
-		contours.set(index, new FContour(points));		
+		contours.set(index, new FContour(points));
 	}
 
 	public void setContour(int index, FContour contour) {
 		contours.set(index, contour);
 	}
-	
+
 	public void clearContours() {
 		this.contours.clear();
 	}
-	
+
 }
