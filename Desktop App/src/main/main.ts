@@ -12,14 +12,14 @@ import path from 'path';
 import fs from 'fs-extra';
 import Jimp from 'jimp';
 import sharp from 'sharp';
+import log from 'electron-log';
 import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
 import { spawn } from 'child_process';
 import { autoUpdater } from 'electron-updater';
-import log from 'electron-log';
+import { homedir } from 'os';
 
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import { homedir } from 'os';
 import { Emotion } from '../renderer/enums/Emotion.enum';
 
 class AppUpdater {

@@ -18,20 +18,6 @@
 
     <build>
         <plugins>
-            <!-- <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
-                <configuration>
-                    <archive>
-                    <manifest>
-                        <addClasspath>true</addClasspath>
-                        <mainClass>org.mahmoudaboueleneen.Main</mainClass>
-                    </manifest>
-                    </archive>
-                </configuration>
-            </plugin> -->
-
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
@@ -72,41 +58,30 @@
             <groupId>com.example</groupId>
             <artifactId>doubletype</artifactId>
             <version>1.0</version>
-            <!-- <scope>system</scope>
-            <systemPath>${project.basedir}/lib/doubletype.jar</systemPath> -->
         </dependency>
 
         <dependency>
             <groupId>com.example</groupId>
             <artifactId>geomerative</artifactId>
             <version>1.0</version>
-            <!-- <scope>system</scope>
-            <systemPath>${project.basedir}/lib/geomerative.jar</systemPath> -->
         </dependency>
 
         <dependency>
             <groupId>com.example</groupId>
             <artifactId>sfntly</artifactId>
             <version>1.0</version>
-            <!-- <scope>system</scope>
-            <systemPath>${project.basedir}/lib/sfntly.jar</systemPath> -->
         </dependency>
 
         <dependency>
             <groupId>com.example</groupId>
             <artifactId>sfnttool</artifactId>
             <version>1.0</version>
-            <!-- <scope>system</scope>
-            <systemPath>${project.basedir}/lib/sfnttool.jar</systemPath> -->
         </dependency>
 
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-catalina</artifactId>
             <version>1.0</version>
-            <!-- <scope>system</scope>
-            <systemPath>${project.basedir}/lib/catalina.jar</systemPath> -->
         </dependency>
     </dependencies>
-
 </project>

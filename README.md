@@ -53,6 +53,7 @@ This project includes a Desktop Application for font generation, and a Chrome Ex
 - Tailwind
 - DaisyUI
 - Java
+- Maven
 - Fontastic
 - FontForge
 
