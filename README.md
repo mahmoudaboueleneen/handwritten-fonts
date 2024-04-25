@@ -73,7 +73,11 @@ This project includes a Desktop Application for font generation, and a Chrome Ex
 
 Unit tests were developed for the Ethereum Smart Contract using Mocha, Ganache and Web3.js.
 
-![Ethereum Unit Tests](docs/Images/test.png)
+![Ethereum Unit Tests](docs/Images/unit-tests.png)
+
+Postman was also used to test fetching encrypted font files from the IPFS
+
+![IPFS Postman Test](docs/Images/postman-test.png)
 
 ## Author
 
