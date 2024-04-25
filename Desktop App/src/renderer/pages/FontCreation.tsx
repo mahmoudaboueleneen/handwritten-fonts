@@ -134,20 +134,30 @@ const FontCreation = () => {
         <div className="space-y-2">
           <h1 className="mb-1 text-lg font-bold">Image format</h1>
           <p>
-            Please fill in the template and then scan it with a scanner or a
-            scanning app like PhotoScan.
+            Please print out the downloaded template and fill it with your
+            handwriting, then scan it with a scanner or a scanning app like
+            PhotoScan.
           </p>
-          <p>
-            Make sure the image is in PNG format and is cropped to the edges of
-            the template, as close as possible to the original template image.
-          </p>
-          <p>
-            Ideal dimensions:{' '}
-            <span className="text-lg font-medium text-neutral-600">
-              {TEMPLATE_IMAGE_WIDTH}x{TEMPLATE_IMAGE_HEIGHT}
-            </span>{' '}
-            pixels
-          </p>
+          <div>
+            <ul>
+              <li>
+                * Image dimensions should be{' '}
+                <span className='className="text-lg font-medium text-neutral-600"'>
+                  {TEMPLATE_IMAGE_WIDTH}x{TEMPLATE_IMAGE_HEIGHT}
+                </span>{' '}
+                pixels
+              </li>
+              <li>* Image should be in PNG format</li>
+              <li>* Image should be cropped to the edges of the template</li>
+              <li>* Image should not be skewed or rotated</li>
+              <li>
+                * Image should have a high contrast with clear white background
+                and deep black characters (Use a black pen to fill the template
+                and edit the image by increasing the contrast and decreasing
+                color saturation if needed)
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
 

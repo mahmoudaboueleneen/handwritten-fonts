@@ -82,6 +82,20 @@ ipcMain.handle('process-image', async (_event, imagePath) => {
   fs.removeSync(generatedDirPath);
   fs.ensureDirSync(generatedDirPath);
 
+  const adjustedImagePath = path.resolve(
+    'temp',
+    'generated',
+    'adjustedImage.png',
+  );
+
+  await sharp(imagePath)
+    .greyscale() // Convert to grayscale to minimize color saturation
+    .normalize() // Maximize contrast
+    .flatten({ background: { r: 255, g: 255, b: 255 } }) // Make the background white
+    .threshold(200) // Binarize the image
+    .toFile(adjustedImagePath);
+  imagePath = adjustedImagePath;
+
   const imageMetadata = await sharp(imagePath).metadata();
 
   if (
