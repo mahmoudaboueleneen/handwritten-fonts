@@ -10,16 +10,8 @@
  */
 import path from 'path';
 import fs from 'fs-extra';
-import svgtofont from 'svgtofont';
 import Jimp from 'jimp';
-import { DOMParser, XMLSerializer } from 'xmldom';
-import { parseSVG } from 'svg-path-parser';
-import svgPathBounds from 'svg-path-bounds';
-import { createWorker } from 'tesseract.js';
-import { PSM } from 'tesseract.js';
-import svg2ttf from 'svg2ttf';
 import sharp from 'sharp';
-import potrace from 'potrace';
 import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
 import { spawn } from 'child_process';
 import { autoUpdater } from 'electron-updater';
@@ -39,30 +31,6 @@ class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
-
-ipcMain.on('run-java', (_event, arg) => {
-  let javaCmd = 'java';
-  let javaArgs = [
-    '-jar',
-    'src/java/target/handwritten-fonts-1.0-SNAPSHOT-jar-with-dependencies.jar',
-    ...arg,
-  ];
-
-  let javaProcess = spawn(javaCmd, javaArgs);
-
-  javaProcess.stdout.on('data', (data) => {
-    console.log(`stdout: ${data}`);
-    _event.sender.send('java-output', data.toString());
-  });
-
-  javaProcess.stderr.on('data', (data) => {
-    console.error(`stderr: ${data}`);
-  });
-
-  javaProcess.on('close', (code) => {
-    console.log(`Java process exited with code ${code}`);
-  });
-});
 
 ipcMain.on('run-fontforge', (_event, arg) => {
   const handwrittenFontPath = arg[0].trim();
@@ -104,29 +72,7 @@ ipcMain.on('run-fontforge', (_event, arg) => {
   });
 });
 
-ipcMain.on('open-file-dialog', (event, path) => {
-  dialog
-    .showOpenDialog({
-      defaultPath: path,
-      properties: ['openDirectory'],
-    })
-    .then((result) => {
-      if (!result.canceled) {
-        event.sender.send('selected-directory', result.filePaths);
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-});
-
 ipcMain.handle('process-image', async (_event, imagePath) => {
-  // Preprocess the image
-  // const preprocessedImagePath = './temp/preprocessed/preprocessed.png';
-  // await sharp(imagePath).toFile(preprocessedImagePath);
-
-  const characterData: Record<string, any> = {};
-
   /**
    * A list of regions in the image where we expect to find characters.
    * This assumes that the selected image has no space around the actual
@@ -134,7 +80,7 @@ ipcMain.handle('process-image', async (_event, imagePath) => {
    * grid will make the coordinates of the regions incorrect.
    */
   const characterRegions = [
-    // Top row (big boxes)
+    // Top row (big cells)
     { top: 30, left: 10, width: 60, height: 60, expectedChar: 'a' },
     { top: 30, left: 80, width: 60, height: 60, expectedChar: 'b' },
     { top: 30, left: 160, width: 60, height: 60, expectedChar: 'c' },
@@ -147,7 +93,7 @@ ipcMain.handle('process-image', async (_event, imagePath) => {
     { top: 30, left: 690, width: 60, height: 60, expectedChar: 'j' },
     { top: 30, left: 770, width: 60, height: 60, expectedChar: 'k' },
 
-    // Second row (big box)
+    // Second row (big cells)
     { top: 130, left: 10, width: 60, height: 60, expectedChar: 'l' },
     { top: 130, left: 80, width: 60, height: 60, expectedChar: 'm' },
     { top: 130, left: 160, width: 60, height: 60, expectedChar: 'n' },
@@ -160,49 +106,12 @@ ipcMain.handle('process-image', async (_event, imagePath) => {
     { top: 130, left: 690, width: 60, height: 60, expectedChar: 'u' },
     { top: 130, left: 770, width: 60, height: 60, expectedChar: 'v' },
 
-    // Fourth row (big box)
+    // Third row (big cells)
     { top: 230, left: 10, width: 60, height: 60, expectedChar: 'w' },
     { top: 230, left: 80, width: 60, height: 60, expectedChar: 'x' },
     { top: 230, left: 160, width: 60, height: 60, expectedChar: 'y' },
     { top: 230, left: 230, width: 60, height: 60, expectedChar: 'z' },
   ];
-
-  // Use Tesseract to recognize text from preprocessed image
-  // await (async () => {
-  //   const worker = await createWorker('eng', 1);
-
-  //   const processCharacter = (result: any) => {
-  //     result.data.words.forEach((word: any) => {
-  //       word.symbols.forEach((symbol: any) => {
-  //         if (/[a-z]/i.test(symbol.text)) {
-  //           // Only process alphabetic characters
-  //           characterData[symbol.text.toLowerCase()] = symbol.bbox; // Store the bounding box data for each character
-  //         }
-  //       });
-  //     });
-  //   };
-
-  //   await worker.setParameters({
-  //     tessedit_char_whitelist: 'abcdefghijklmnopqrstuvwxyz',
-  //   });
-
-  //   for (const region of characterRegions) {
-  //     await worker.setParameters({
-  //       tessedit_char_whitelist: region.expectedChar,
-  //       tessedit_pageseg_mode: PSM.SINGLE_CHAR,
-  //     });
-
-  //     const result = await worker.recognize(preprocessedImagePath, {
-  //       rectangle: region,
-  //     });
-
-  //     console.log('Recognized text:', result.data.text);
-
-  //     processCharacter(result);
-  //   }
-  // })();
-
-  console.log('Character data:', characterData);
 
   const svgsDirPath = path.resolve('temp', 'svgs');
   fs.removeSync(svgsDirPath);
@@ -212,17 +121,10 @@ ipcMain.handle('process-image', async (_event, imagePath) => {
   fs.removeSync(generatedDirPath);
   fs.ensureDirSync(generatedDirPath);
 
-  // const preprocessedDirPath = path.resolve('temp', 'preprocessed');
-  // fs.removeSync(preprocessedDirPath);
-  // fs.ensureDirSync(preprocessedDirPath);
-
-  const emptyTemplateImagePath = path.resolve('assets', 'template.png');
-
   let xOffset = 0;
   let fontasticData = '';
   let newImage = new Jimp(1500, 400, 0xffffffff);
 
-  // Create SVGs for each character
   for (const region of characterRegions) {
     const croppedImageBuffer = await sharp(imagePath)
       .extract({
@@ -234,25 +136,11 @@ ipcMain.handle('process-image', async (_event, imagePath) => {
       .png()
       .toBuffer();
 
-    // Load the image with Jimp
     const image = await Jimp.read(croppedImageBuffer);
+    image.autocrop(); // Autocrop the image to remove any whitespace around the character
 
-    console.log('width before autocrop', image.bitmap.width);
-    console.log('height before autocrop', image.bitmap.height);
-
-    // Autocrop the image
-    image.autocrop();
-
-    console.log('width after autocrop', image.bitmap.width);
-    console.log('height after autocrop', image.bitmap.height);
-
-    // Add the cropped image to the new image at the current xOffset
     newImage.composite(image, xOffset, 0);
 
-    // Get the buffer of the cropped image
-    // const croppedBuffer = await image.getBufferAsync(Jimp.MIME_PNG);
-
-    // Save the cropped image to a file
     const croppedImagePath = path.resolve(
       generatedDirPath,
       `${region.expectedChar}.png`,
@@ -260,11 +148,12 @@ ipcMain.handle('process-image', async (_event, imagePath) => {
     image.write(croppedImagePath);
 
     fontasticData += `${region.expectedChar},${xOffset},0,${image.bitmap.width},${image.bitmap.height}/`;
-    console.log('fontasticData:', fontasticData);
-    xOffset += image.bitmap.width; // Use the width of the autocropped image
+
+    xOffset += image.bitmap.width;
   }
 
   const newImagePath = path.resolve('temp', 'generated', 'newImage.png');
+
   newImage.write(newImagePath);
 
   let javaCmd = 'java';
@@ -289,73 +178,22 @@ ipcMain.handle('process-image', async (_event, imagePath) => {
   javaProcess.on('close', (code) => {
     console.log(`Java process exited with code ${code}`);
   });
+});
 
-  //   potrace.trace(croppedBuffer, (error, svgContent) => {
-  //     if (error) {
-  //       console.error('Error tracing image:', error);
-  //       return;
-  //     }
-
-  //     // Add fill-rule="nonzero" to the path element if it doesn't exist
-  //     if (svgContent.includes('fill-rule="evenodd"')) {
-  //       svgContent = svgContent.replace('evenodd', 'nonzero');
-  //     }
-
-  //     if (svgContent.includes('fill="black"')) {
-  //       svgContent = svgContent.replace('black', 'white');
-  //     }
-
-  //     // Check if the character has a descender
-  //     if (['g', 'p', 'q', 'y', 'j'].includes(region.expectedChar)) {
-  //       // Parse the SVG content
-  //       const svgDoc = new DOMParser().parseFromString(
-  //         svgContent,
-  //         'image/svg+xml',
-  //       );
-  //       const svgElem = svgDoc.documentElement;
-
-  //       // Get the original viewBox
-  //       const originalViewBox = svgElem
-  //         .getAttribute('viewBox')!
-  //         .split(' ')
-  //         .map(Number);
-
-  //       // Adjust the viewBox to shift the character downwards
-  //       const adjustedViewBox = [
-  //         originalViewBox[0],
-  //         originalViewBox[1] - 20,
-  //         originalViewBox[2],
-  //         originalViewBox[3] + 20,
-  //       ];
-
-  //       // Update the viewBox attribute
-  //       svgElem.setAttribute('viewBox', adjustedViewBox.join(' '));
-
-  //       // Convert the SVG document back to a string
-  //       svgContent = new XMLSerializer().serializeToString(svgDoc);
-  //     }
-
-  //     characterData[region.expectedChar] = svgContent;
-  //   });
-  // }
-
-  // for (const [char, svgContent] of Object.entries(characterData)) {
-  //   fs.writeFileSync(`${svgsDirPath}/${char}.svg`, svgContent);
-  // }
-
-  // svgtofont({
-  //   src: path.resolve(process.cwd(), 'temp', 'svgs'),
-  //   dist: path.resolve(process.cwd(), 'temp', 'generated'),
-  //   fontName: 'MyFont',
-  //   css: false,
-  //   startUnicode: 0x61, // start character mapping at 'a'
-  //   svgicons2svgfont: {
-  //     fontHeight: 1000,
-  //     // normalize: true,
-  //   },
-  // }).then(() => {
-  //   console.log('Done!');
-  // });
+ipcMain.on('open-file-dialog', (event, path) => {
+  dialog
+    .showOpenDialog({
+      defaultPath: path,
+      properties: ['openDirectory'],
+    })
+    .then((result) => {
+      if (!result.canceled) {
+        event.sender.send('selected-directory', result.filePaths);
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 });
 
 if (process.env.NODE_ENV === 'production') {
