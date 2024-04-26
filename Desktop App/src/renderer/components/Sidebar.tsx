@@ -4,7 +4,7 @@ const Sidebar = () => {
   const navigate = useNavigate();
 
   return (
-    <ul className="h-screen drop-shadow-2xl menu bg-secondary">
+    <ul className="min-h-screen h- drop-shadow-2xl menu bg-secondary">
       <li>
         <button
           className="tooltip tooltip-right"

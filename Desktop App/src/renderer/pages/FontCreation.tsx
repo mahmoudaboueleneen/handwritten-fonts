@@ -102,7 +102,7 @@ const FontCreation = () => {
     return (
       <div className="flex flex-col items-center justify-center h-full">
         <img className="mb-10" src={templateImg} alt="Template" />
-        <button className="btn btn-lg btn-success" onClick={downloadTemplate}>
+        <button className="btn btn-lg btn-primary" onClick={downloadTemplate}>
           Download Template
         </button>
       </div>

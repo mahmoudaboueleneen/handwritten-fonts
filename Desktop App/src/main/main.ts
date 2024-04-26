@@ -54,6 +54,10 @@ ipcMain.on('run-fontforge', (_event, arg) => {
 
   if (emotion === Emotion.NEUTRAL) {
     fs.copySync(handwrittenFontPath, outputFontPath);
+    _event.sender.send(
+      'fontforge-output',
+      'Interpolated font file generated: ' + outputFontPath,
+    );
     return;
   }
 

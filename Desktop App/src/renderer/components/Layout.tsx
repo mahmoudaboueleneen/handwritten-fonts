@@ -6,10 +6,8 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
   return (
-    <div className="flex">
-      <div className="self-center">
-        <Sidebar />
-      </div>
+    <div className="flex h-full">
+      <Sidebar />
 
       <div className="container mx-auto">{children}</div>
     </div>

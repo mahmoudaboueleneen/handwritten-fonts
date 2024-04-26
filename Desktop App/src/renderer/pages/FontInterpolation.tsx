@@ -3,33 +3,28 @@ import { useState, useEffect } from 'react';
 import { useGeneratedFontFilePath } from '../hooks/useGeneratedFontFilePath';
 import { Emotion } from '../enums/Emotion.enum';
 
+type ButtonStatus = { [key in Emotion]: string };
+
 const FontInterpolation = () => {
   const [showToast, setShowToast] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string>('');
   const [toastStatus, setToastStatus] = useState<string>('');
-  const [angerClicked, setAngerClicked] = useState<boolean>(false);
-  const [fearClicked, setFearClicked] = useState<boolean>(false);
-  const [happinessClicked, setHappinessClicked] = useState<boolean>(false);
-  const [sadnessClicked, setSadnessClicked] = useState<boolean>(false);
-  const [surpriseClicked, setSurpriseClicked] = useState<boolean>(false);
-  const [neutralClicked, setNeutralClicked] = useState<boolean>(false);
+  const [buttonStatus, setButtonStatus] = useState<ButtonStatus>(
+    Object.values(Emotion).reduce(
+      (acc, curr) => ({ ...acc, [curr]: 'idle' }),
+      {} as ButtonStatus,
+    ),
+  );
+
   const { generatedFontFilePath } = useGeneratedFontFilePath();
 
-  const emotionToInterpolationPercentage = {
-    [Emotion.ANGER]: 60,
-    [Emotion.FEAR]: 40,
-    [Emotion.HAPPINESS]: 60,
-    [Emotion.SADNESS]: 80,
-    [Emotion.SURPRISE]: 60,
-    [Emotion.NEUTRAL]: 100,
-  };
-
   const generateFontVariant = (emotion: Emotion) => {
+    setButtonStatus((prev) => ({ ...prev, [emotion]: 'generating' }));
+
     const args = [
       generatedFontFilePath,
       `assets/reference_fonts/${emotion}.ttf`,
       emotion,
-      // emotionToInterpolationPercentage[emotion],
     ];
 
     window.electron.ipcRenderer.runFontForge(args);
@@ -46,6 +41,22 @@ const FontInterpolation = () => {
         setToastMessage(`New font generated at: ${newInterpolatedFontPath}`);
         setToastStatus('success');
         setShowToast(true);
+
+        let emotion: Emotion;
+
+        if (newInterpolatedFontPath.includes('\\')) {
+          emotion = newInterpolatedFontPath
+            .split('\\')
+            .pop()
+            ?.split('.ttf')[0] as Emotion;
+        } else if (newInterpolatedFontPath.includes('/')) {
+          emotion = newInterpolatedFontPath
+            .split('/')
+            .pop()
+            ?.split('.ttf')[0] as Emotion;
+        }
+
+        setButtonStatus((prev) => ({ ...prev, [emotion]: 'done' }));
 
         const timeoutId = setTimeout(() => {
           setShowToast(false);
@@ -100,22 +111,11 @@ const FontInterpolation = () => {
             key={emotion}
             className="w-32 btn btn-primary"
             onClick={() => generateFontVariant(emotion)}
-            disabled={
-              (emotion === Emotion.ANGER && angerClicked) ||
-              (emotion === Emotion.FEAR && fearClicked) ||
-              (emotion === Emotion.HAPPINESS && happinessClicked) ||
-              (emotion === Emotion.SADNESS && sadnessClicked) ||
-              (emotion === Emotion.SURPRISE && surpriseClicked) ||
-              (emotion === Emotion.NEUTRAL && neutralClicked)
-            }
+            disabled={buttonStatus[emotion] !== 'idle'}
           >
             {emotion}
-            {emotion === Emotion.ANGER && angerClicked && ' - Done'}
-            {emotion === Emotion.FEAR && fearClicked && ' - Done'}
-            {emotion === Emotion.HAPPINESS && happinessClicked && ' - Done'}
-            {emotion === Emotion.SADNESS && sadnessClicked && ' - Done'}
-            {emotion === Emotion.SURPRISE && surpriseClicked && ' - Done'}
-            {emotion === Emotion.NEUTRAL && neutralClicked && ' - Done'}
+            {buttonStatus[emotion] === 'generating' && ' - Generating...'}
+            {buttonStatus[emotion] === 'done' && ' - Done'}
           </button>
         ))}
       </div>

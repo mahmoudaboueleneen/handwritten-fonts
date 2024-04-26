@@ -6,7 +6,7 @@ const Home = () => {
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <button
-        className=" btn btn-lg btn-success"
+        className=" btn btn-lg btn-primary"
         onClick={() => {
           navigate('/font-creation');
         }}
