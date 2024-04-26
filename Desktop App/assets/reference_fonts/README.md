@@ -3,7 +3,7 @@
 Actual names of the used fonts:
 
 - Fear: Chiller
-- Anger: Metal Lord
+- Anger: Arial Black
 - Happiness: Peaches for Breakfast
 - Sadness: Colwell
 - Surprise:

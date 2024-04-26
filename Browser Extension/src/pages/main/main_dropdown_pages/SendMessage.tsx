@@ -15,6 +15,8 @@ import { SymmetricDecryptionError } from "../../../utils/errors/SymmetricDecrypt
 import { Contact } from "../../../types/Contact.interface";
 import { encryptMessageAsymmetric } from "../../../utils/cryptography/AsymmetricEncryption";
 import { signMessage } from "../../../utils/signature/SignMessage";
+import { EmotionToFont } from "../../../types/EmotionToFont.type";
+import { Emotion } from "../../../types/Emotion.enum";
 
 const SendMessage = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -25,8 +27,8 @@ const SendMessage = () => {
   const [recipientAddress, setRecipientAddress] = useState<string>("");
   const [enteredMessage, setEnteredMessage] = useState<string>("");
   const [outputMessage, setOutputMessage] = useState<string>("");
-  const [noFontsFound, setNoFontsFount] = useState<boolean>(false);
-  const [fonts, setFonts] = useState<Font[]>([]);
+  const [noFontsFound, setNoFontsFound] = useState<boolean>(false);
+  const [fonts, setFonts] = useState<EmotionToFont | null>(null);
   const [selectedFont, setSelectedFont] = useState<Font | null>(null);
 
   const [password, setPassword] = useState<string>("");
@@ -40,14 +42,13 @@ const SendMessage = () => {
 
   useEffect(() => {
     const fonts = getFontsFromLocalStorage(selectedAccount);
-    console.log(fonts);
 
-    if (fonts.length === 0) {
-      setNoFontsFount(true);
+    if (Object.keys(fonts).length === 0) {
+      setNoFontsFound(true);
       return;
-    } else {
-      setFonts(fonts);
     }
+
+    setFonts(fonts);
 
     const contacts = getContactsFromLocalStorage(selectedAccount);
     setContacts(contacts);
@@ -71,8 +72,8 @@ const SendMessage = () => {
   };
 
   const handleFontChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedFontFilename = event.target.value;
-    const selectedFont = fonts.find((font) => font.fileName === selectedFontFilename);
+    const selectedFontFileEmotion = event.target.value as Emotion;
+    const selectedFont = fonts ? fonts[selectedFontFileEmotion] : null;
 
     if (!selectedFont) {
       console.error("Selected font not found");
@@ -184,7 +185,7 @@ const SendMessage = () => {
 
   if (noFontsFound)
     return (
-      <div className="flex flex-col items-center justify-center px-5">
+      <div className="flex flex-col items-center justify-center h-screen px-5">
         <h1 className="text-2xl font-bold text-center">No fonts found on your device</h1>
         <p className="text-center">Please upload a font file or backup your fonts.</p>
       </div>
@@ -217,11 +218,12 @@ const SendMessage = () => {
         <option disabled selected>
           Select your font
         </option>
-        {fonts.map((font, index) => (
-          <option key={index} value={font.fileName}>
-            {font.fileName}
-          </option>
-        ))}
+        {fonts &&
+          Object.keys(fonts).map((emotion) => (
+            <option key={emotion} value={emotion}>
+              {emotion.toString()}
+            </option>
+          ))}
       </select>
 
       <button className="w-full btn btn-primary" onClick={openModal}>

@@ -1,28 +1,41 @@
 import { Contact } from "../../types/Contact.interface";
-import { Font } from "../../types/Font.interface";
+import { Emotion } from "../../types/Emotion.enum";
+import { EmotionToFont } from "../../types/EmotionToFont.type";
 
-export function addFontToLocalStorage(cid: string, fileName: string, symmetricKey: string, account: string) {
+export function addFontToLocalStorage(
+  emotion: Emotion,
+  cid: string,
+  fileName: string,
+  symmetricKey: string,
+  account: string
+) {
   const fonts = localStorage.getItem(`HandwrittenFonts_${account}_fonts`);
-  const parsedFonts = fonts ? JSON.parse(fonts) : [];
+  const parsedFonts = fonts ? JSON.parse(fonts) : {};
 
   const newFont = { cid, fileName, symmetricKey };
-  parsedFonts.push(newFont);
 
-  localStorage.setItem(`HandwrittenFonts_${account}_fonts`, JSON.stringify(parsedFonts));
+  const updatedFonts = { ...parsedFonts, [emotion]: newFont };
+
+  localStorage.setItem(`HandwrittenFonts_${account}_fonts`, JSON.stringify(updatedFonts));
 }
 
-export function getFontsFromLocalStorage(account: string): Font[] | [] {
+export function getFontsFromLocalStorage(account: string): EmotionToFont {
   const fonts = localStorage.getItem(`HandwrittenFonts_${account}_fonts`);
-  const parsedFonts = fonts ? JSON.parse(fonts) : [];
+  const parsedFonts = fonts ? JSON.parse(fonts) : {};
 
   return parsedFonts;
 }
 
 export function removeFontFromLocalStorage(account: string, fileName: string) {
   const fonts = localStorage.getItem(`HandwrittenFonts_${account}_fonts`);
-  const parsedFonts = fonts ? JSON.parse(fonts) : [];
+  const parsedFonts = fonts ? JSON.parse(fonts) : {};
 
-  const updatedFonts = parsedFonts.filter((font: Font) => font.fileName !== fileName);
+  const updatedFonts = { ...parsedFonts };
+  for (const emotion in updatedFonts) {
+    if (updatedFonts[emotion].fileName === fileName) {
+      delete updatedFonts[emotion];
+    }
+  }
 
   localStorage.setItem(`HandwrittenFonts_${account}_fonts`, JSON.stringify(updatedFonts));
 }

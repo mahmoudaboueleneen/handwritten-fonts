@@ -11,10 +11,11 @@
 Open($2)
 
 # Interpolate with the handwritten font using a certain percentage of the handwritten font
-InterpolateFonts(70, $1)
+InterpolateFonts(50, $1)
 
-# Save the new font
-Generate($3)
+# Adjust the side bearings
+SelectAll()
+AutoWidth(100)
 
 # Print the path of the new saved font so the desktop app can be alerted and display a message to the user
 Print("Interpolated font file generated: " + $3)

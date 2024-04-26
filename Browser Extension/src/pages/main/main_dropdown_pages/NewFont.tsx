@@ -11,8 +11,10 @@ import {
 import { SymmetricDecryptionError } from "../../../utils/errors/SymmetricDecryptionError";
 import { addFontToLocalStorage } from "../../../utils/storage/LocalStorage";
 import { useAuth } from "../../../hooks/useAuth";
+import { Emotion } from "../../../types/Emotion.enum";
 
 const NewFont = () => {
+  const [selectedEmotion, setSelectedEmotion] = useState<Emotion | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadedFileUrl, setUploadedFileUrl] = useState<string>("");
   const [uploadedFileCid, setUploadedFileCid] = useState<string>("");
@@ -49,6 +51,11 @@ const NewFont = () => {
   const onUpload = async () => {
     setErrorMessage("");
     setModalErrorMessage("");
+
+    if (!selectedEmotion) {
+      setErrorMessage("Please select an emotion to continue");
+      return;
+    }
 
     if (!selectedFile) {
       setErrorMessage("Please select a file to upload");
@@ -114,7 +121,7 @@ const NewFont = () => {
       const encryptedSymmetricKey = encryptMessageSymmetric(password, key);
 
       // Save the font to local storage
-      addFontToLocalStorage(encryptedCid, encryptedFilename, encryptedSymmetricKey, selectedAccount);
+      addFontToLocalStorage(selectedEmotion, encryptedCid, encryptedFilename, encryptedSymmetricKey, selectedAccount);
 
       // Decrypt the file to verify it's the same
       const decryptedFileString = await decryptFileSymmetric(key, encryptedFileString);
@@ -142,10 +149,35 @@ const NewFont = () => {
       <h1 className="mb-5 text-2xl font-bold text-center">Upload a new font file (TTF Files only)</h1>
 
       <label className="w-full max-w-xs mb-2 form-control">
-        <input type="file" onChange={onFileChange} className="w-full max-w-xs file-input file-input-bordered" />
+        <input
+          type="file"
+          onChange={onFileChange}
+          className="w-full max-w-xs file-input file-input-bordered"
+          accept=".ttf"
+        />
       </label>
 
-      <button className="w-full btn btn-primary" disabled={!selectedFile} onClick={() => openModal()}>
+      <label className="w-full max-w-xs mb-2 form-control">
+        <select
+          className="w-full select select-bordered select-primary"
+          onChange={(e) => setSelectedEmotion(e.target.value as Emotion)}
+        >
+          <option disabled selected>
+            Select Emotion
+          </option>
+          {Object.values(Emotion).map((emotion) => (
+            <option key={emotion} value={emotion}>
+              {emotion}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <button
+        className="w-full btn btn-primary"
+        disabled={!selectedFile || !selectedEmotion}
+        onClick={() => openModal()}
+      >
         Upload File
       </button>
 
@@ -187,7 +219,6 @@ const NewFont = () => {
         <div className="modal-box">
           <h3 className="text-lg font-bold mb-7">Enter your password to continue</h3>
           {modalErrorMessage && <span className="my-5 text-center text-error">{modalErrorMessage}</span>}
-          // TODO: Accept ttf only
           <input
             type="password"
             className="w-full input input-bordered join-item"
