@@ -111,7 +111,7 @@ const FontInterpolation = () => {
             key={emotion}
             className="w-32 btn btn-primary"
             onClick={() => generateFontVariant(emotion)}
-            disabled={buttonStatus[emotion] !== 'idle'}
+            // disabled={buttonStatus[emotion] !== 'idle'}
           >
             {emotion}
             {buttonStatus[emotion] === 'generating' && ' - Generating...'}

@@ -96,7 +96,7 @@ ipcMain.handle('process-image', async (_event, imagePath) => {
     .greyscale() // Convert to grayscale to minimize color saturation
     .normalize() // Maximize contrast
     .flatten({ background: { r: 255, g: 255, b: 255 } }) // Make the background white
-    .threshold(240) // Binarize the image
+    .threshold(128) // Binarize the image
     .toFile(adjustedImagePath);
   imagePath = adjustedImagePath;
 

@@ -13,6 +13,10 @@ Open($2)
 # Interpolate with the handwritten font using a certain percentage of the handwritten font
 InterpolateFonts(60, $1)
 
+# Adjust the side bearings
+SelectAll()
+AutoWidth(100)
+
 # Save the new font
 Generate($3)
 

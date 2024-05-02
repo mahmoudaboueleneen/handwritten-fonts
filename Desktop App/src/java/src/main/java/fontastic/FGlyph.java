@@ -43,7 +43,7 @@ public class FGlyph {
 
 	private char glyphChar;
 	private List<FContour> contours;
-	private int advanceWidth = 512;
+	private int advanceWidth = 128;
 	/**
 	 * @author Mahmoud Abou Eleneen
 	 * @note These two variable are NOT originally part of the FGlyph class. They

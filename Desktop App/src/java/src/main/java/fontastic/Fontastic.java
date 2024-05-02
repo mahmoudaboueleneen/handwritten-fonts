@@ -65,7 +65,7 @@ public class Fontastic {
 
 	private List<FGlyph> glyphs;
 
-	private int advanceWidth = 512;
+	private int advanceWidth = 128;
 
 	public final static String VERSION = "0.3";
 	private boolean debug = true; // debug toggles println calls
@@ -168,13 +168,13 @@ public class Fontastic {
 
 			GlyphFile glyphFile = m_engine.addNewGlyph(glyph.getGlyphChar());
 
-			// NOTE: Commented out as it caused too much space between letters
-			// glyphFile.setAdvanceWidth(glyph.getAdvanceWidth());
-
 			// NOTE: The following two lines are custom code and not originally part of the
 			// Fontastic library
 			glyphFile.setAdvanceWidth(glyph.getActualAdvanceWidth());
 			glyph.alignToBaseline();
+
+			// NOTE: Commented out as it caused too much space between letters
+			// glyphFile.setAdvanceWidth(glyph.getAdvanceWidth());
 
 			for (FContour contour : glyph.getContours()) {
 
