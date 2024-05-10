@@ -277,13 +277,14 @@ const createWindow = async () => {
     icon: getAssetPath('icon.png'),
     minWidth: 1024,
     webPreferences: {
+      devTools: false,
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
     },
   });
 
-  mainWindow.maximize();
+  // mainWindow.maximize();
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
