@@ -6,6 +6,19 @@ function injectScript(file_path) {
   (document.head || document.documentElement).appendChild(script);
 }
 
+/**
+ * @summary This is a workaround for the issue of the content script not being able to access the same 
+            JavaScript variables as those available in the actual active webpage. This is because the content
+            script runs in a separate context from the webpage. The workaround is to inject a script into the
+            webpage that can access the webpage's JavaScript variables and then communicate with the content
+            script This injected script is the one that actually interacts with the Ethereum provider and
+            then sends the results back to the content script.
+
+            Also, any time the injected script is changed, its filename should be manually updated in the following line.
+            You must build the extension, see what the new filename is, and then update the following line, then rebuild again.
+
+            For more information about the communication between the extension and metamask, see the docs.
+ */
 injectScript(chrome.runtime.getURL("assets/injectedScript-CVX7b_kC.js"));
 
 chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {

@@ -39,10 +39,10 @@ public class FontCreation extends PApplet {
 				for (int j = 0; j < Data[i].length; j++) {
 					if (Data[i][j] == 0 || Data[i][j] < 200) {
 						points = new PVector[4];
-						points[0] = new PVector((j % w[i] * 10) - 6, (-1 * (j / w[i] * 10) - 6) + 400);
-						points[1] = new PVector((j % w[i] * 10) + 6, (-1 * (j / w[i] * 10) - 6) + 400);
-						points[2] = new PVector((j % w[i] * 10) + 6, (-1 * (j / w[i] * 10) + 6) + 400);
-						points[3] = new PVector((j % w[i] * 10) - 6, (-1 * (j / w[i] * 10) + 6) + 400);
+						points[0] = new PVector((j % w[i] * 20) - 12, (-1 * (j / w[i] * 20) - 12) + 800);
+						points[1] = new PVector((j % w[i] * 20) + 12, (-1 * (j / w[i] * 20) - 12) + 800);
+						points[2] = new PVector((j % w[i] * 20) + 12, (-1 * (j / w[i] * 20) + 12) + 800);
+						points[3] = new PVector((j % w[i] * 20) - 12, (-1 * (j / w[i] * 20) + 12) + 800);
 						font.getGlyph(Cs[i]).addContour(points);
 					}
 				}
