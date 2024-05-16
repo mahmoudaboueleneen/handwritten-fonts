@@ -26,6 +26,9 @@ const electronHandler = {
     processImage: async (imagePath: string) => {
       return await ipcRenderer.invoke('process-image', imagePath);
     },
+    getAssetPath: async (...paths: string[]) => {
+      return await ipcRenderer.invoke('get-asset-path', ...paths);
+    },
   },
 };
 

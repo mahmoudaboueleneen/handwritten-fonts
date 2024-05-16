@@ -44,7 +44,7 @@ ipcMain.on('run-fontforge', (_event, arg) => {
   // Different scripts were created for each emotion due to problems
   // with passing the interpolation percentage to the script as an argument,
   // which needs to be different for each emotion.
-  const scriptPath = `src/scripts/${emotion}_interpolate_fonts.ff`;
+  const scriptPath = getAssetPath('scripts', `${emotion}_interpolate_fonts.ff`);
 
   const outputFontPath = path.join(
     homedir(),
@@ -82,11 +82,12 @@ ipcMain.on('run-fontforge', (_event, arg) => {
 });
 
 ipcMain.handle('process-image', async (_event, imagePath) => {
-  const generatedDirPath = path.resolve('temp', 'generated');
+  const generatedDirPath = getAssetPath('temp', 'generated');
+
   fs.removeSync(generatedDirPath);
   fs.ensureDirSync(generatedDirPath);
 
-  const adjustedImagePath = path.resolve(
+  const adjustedImagePath = getAssetPath(
     'temp',
     'generated',
     'adjustedImage.png',
@@ -106,7 +107,7 @@ ipcMain.handle('process-image', async (_event, imagePath) => {
     imageMetadata.width !== TEMPLATE_IMAGE_WIDTH ||
     imageMetadata.height !== TEMPLATE_IMAGE_HEIGHT
   ) {
-    const resizedImagePath = path.resolve(
+    const resizedImagePath = getAssetPath(
       'temp',
       'generated',
       'resizedImage.png',
@@ -178,8 +179,9 @@ ipcMain.handle('process-image', async (_event, imagePath) => {
 
     newImage.composite(image, xOffset, 0);
 
-    const croppedImagePath = path.resolve(
-      generatedDirPath,
+    const croppedImagePath = getAssetPath(
+      'temp',
+      'generated',
       `${region.expectedChar}.png`,
     );
     image.write(croppedImagePath);
@@ -189,14 +191,17 @@ ipcMain.handle('process-image', async (_event, imagePath) => {
     xOffset += image.bitmap.width;
   }
 
-  const newImagePath = path.resolve('temp', 'generated', 'newImage.png');
+  const newImagePath = getAssetPath('temp', 'generated', 'newImage.png');
 
   newImage.write(newImagePath);
 
   let javaCmd = 'java';
   let javaArgs = [
     '-jar',
-    'src/java/target/handwritten-fonts-1.0-SNAPSHOT-jar-with-dependencies.jar',
+    getAssetPath(
+      'java',
+      'handwritten-fonts-1.0-SNAPSHOT-jar-with-dependencies.jar',
+    ),
     fontasticData,
     newImagePath,
   ];
@@ -259,18 +264,22 @@ const installExtensions = async () => {
     .catch(console.log);
 };
 
+const RESOURCES_PATH = app.isPackaged
+  ? path.join(process.resourcesPath, 'assets')
+  : path.join(__dirname, '../../assets');
+
+const getAssetPath = (...paths: string[]): string => {
+  return path.join(RESOURCES_PATH, ...paths);
+};
+
+ipcMain.handle('get-asset-path', (_event, ...paths: string[]) => {
+  return getAssetPath(...paths);
+});
+
 const createWindow = async () => {
   if (isDebug) {
     await installExtensions();
   }
-
-  const RESOURCES_PATH = app.isPackaged
-    ? path.join(process.resourcesPath, 'assets')
-    : path.join(__dirname, '../../assets');
-
-  const getAssetPath = (...paths: string[]): string => {
-    return path.join(RESOURCES_PATH, ...paths);
-  };
 
   mainWindow = new BrowserWindow({
     show: false,

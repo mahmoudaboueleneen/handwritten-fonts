@@ -18,14 +18,15 @@ const FontInterpolation = () => {
 
   const { generatedFontFilePath } = useGeneratedFontFilePath();
 
-  const generateFontVariant = (emotion: Emotion) => {
+  const generateFontVariant = async (emotion: Emotion) => {
     setButtonStatus((prev) => ({ ...prev, [emotion]: 'generating' }));
 
-    const args = [
-      generatedFontFilePath,
-      `assets/reference_fonts/${emotion}.ttf`,
-      emotion,
-    ];
+    const referenceFontPath = await window.electron.ipcRenderer.getAssetPath(
+      'reference_fonts',
+      `${emotion}.ttf`,
+    );
+
+    const args = [generatedFontFilePath, referenceFontPath, emotion];
 
     window.electron.ipcRenderer.runFontForge(args);
   };
