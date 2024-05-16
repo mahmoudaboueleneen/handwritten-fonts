@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Web3 } from "web3";
 
-import compiledContract from "../../Ethereum/build/HandwrittenFonts.json";
+import compiledContract from "./eth_build/HandwrittenFonts.json";
 import { config } from "./config/config";
 
 if (typeof window.ethereum === "undefined") {
