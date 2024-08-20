@@ -1,14 +1,8 @@
 # Handwritten Fonts
 
-Create handwritten fonts from your own handwriting and send messages via any messaging platform in your handwriting.
+Create handwritten fonts from your own handwriting and send messages via any messaging platform in your handwriting. This project includes a Desktop Application for font generation, and a Chrome Extension for sending and displaying messages in handwritten fonts, and leverages fully decentralized technologies (IPFS and Ethereum Blockchain) for all storage and processing logic, and its own encryption system for security using a mix of symmetric and asymmetric encryption algorithms.
 
-This project includes a Desktop Application for font generation, and a Chrome Extension for sending and displaying messages in handwritten fonts, and leverages fully decentralized technologies (IPFS and Ethereum Blockchain) for all storage and processing logic, and its own encryption system for security.
-
-## Usage For Users
-
-This project has yet to be deployed.
-
-## Developer Usage
+## Getting Started
 
 1. Clone the repository
 
@@ -108,9 +102,15 @@ This project has yet to be deployed.
 - JSEncrypt
 - Crypto-JS
 
+**Blockchain and File Storage**
+
+- Ethereum
+- Solidity
+- IPFS
+
 ## Tests
 
-Unit tests were developed for the Ethereum Smart Contract using Mocha, Ganache and Web3.js.
+Unit tests were developed for the Ethereum Smart Contract using Mocha, Ganache, and Web3.js.
 
 ![Ethereum Unit Tests](docs/Images/unit-tests.png)
 
@@ -124,4 +124,4 @@ Postman was also used to test fetching encrypted font files from the IPFS
 
 ## Credits
 
-## References
+Credits to Dr. Wael Abouelsaadat for supervising the project.
